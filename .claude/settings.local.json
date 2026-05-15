@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --no-src-dir --import-alias=\"@/*\" --yes)",
+      "Bash(mkdir -p /tmp/ev-backup)",
+      "Bash(mv /Users/punnasikasunyano/Desktop/ev-car-rent/ev-rental-requirements.md /Users/punnasikasunyano/Desktop/ev-car-rent/ev_rental_full_feature_list.html /tmp/ev-backup/)"
+    ]
+  }
+}
