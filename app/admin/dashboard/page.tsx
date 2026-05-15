@@ -47,48 +47,58 @@ export default function AdminDashboard() {
         <p className="text-sm text-secondary mt-0.5">Fleet overview — 15 May 2026</p>
       </div>
 
-      {/* Fleet stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        <StatCard label="Total Cars" value={totalCars} />
-        <StatCard label="Available" value={available} trend={{ direction: "up", percent: 5 }} />
-        <StatCard label="Rented" value={rented} trend={{ direction: "up", percent: 12 }} />
-        <StatCard label="Maintenance" value={maintenance} />
-        <StatCard label="Sold" value={sold} trend={{ direction: "up", percent: 3 }} />
-      </div>
-
-      {/* Revenue stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <StatCard label="Monthly Revenue" value={formatBaht(monthlyRevenue)} trend={{ direction: "up", percent: 8 }} accent />
-        <StatCard label="Yearly Revenue (YTD)" value={formatBaht(yearlyRevenue)} trend={{ direction: "up", percent: 15 }} accent />
-        <StatCard label="Conversions This Month" value="1" trend={{ direction: "up", percent: 0 }} />
-      </div>
-
-      {/* This month activity */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
-          <p className="text-xs text-secondary uppercase tracking-wide">Pick-ups</p>
-          <p className="text-3xl font-semibold mt-1">7</p>
-          <p className="text-xs text-secondary mt-0.5">This month</p>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
-          <p className="text-xs text-secondary uppercase tracking-wide">Returns</p>
-          <p className="text-3xl font-semibold mt-1">4</p>
-          <p className="text-xs text-secondary mt-0.5">This month</p>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
-          <p className="text-xs text-secondary uppercase tracking-wide">New Bookings</p>
-          <p className="text-3xl font-semibold mt-1">5</p>
-          <p className="text-xs text-secondary mt-0.5">This month</p>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
-          <p className="text-xs text-secondary uppercase tracking-wide">Conversions</p>
-          <p className="text-3xl font-semibold mt-1">1</p>
-          <p className="text-xs text-secondary mt-0.5">This month</p>
+      {/* Fleet Status */}
+      <div className="flex flex-col gap-2">
+        <p className="text-xs font-semibold uppercase tracking-widest text-secondary">Fleet Status</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          <StatCard label="Total Cars" value={totalCars} />
+          <StatCard label="Available" value={available} trend={{ direction: "up", percent: 5 }} />
+          <StatCard label="Rented" value={rented} trend={{ direction: "up", percent: 12 }} />
+          <StatCard label="Maintenance" value={maintenance} />
+          <StatCard label="Sold" value={sold} trend={{ direction: "up", percent: 3 }} />
         </div>
       </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {/* Financial Summary */}
+      <div className="flex flex-col gap-2">
+        <p className="text-xs font-semibold uppercase tracking-widest text-secondary">Financial Summary</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <StatCard label="Monthly Revenue" value={formatBaht(monthlyRevenue)} trend={{ direction: "up", percent: 8 }} accent />
+          <StatCard label="Yearly Revenue (YTD)" value={formatBaht(yearlyRevenue)} trend={{ direction: "up", percent: 15 }} accent />
+        </div>
+      </div>
+
+      {/* Monthly Activity */}
+      <div className="flex flex-col gap-2">
+        <p className="text-xs font-semibold uppercase tracking-widest text-secondary">Monthly Activity</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+            <p className="text-xs text-secondary uppercase tracking-wide">Pick-ups</p>
+            <p className="text-3xl font-semibold mt-1">7</p>
+            <p className="text-xs text-secondary mt-0.5">This month</p>
+          </div>
+          <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+            <p className="text-xs text-secondary uppercase tracking-wide">Returns</p>
+            <p className="text-3xl font-semibold mt-1">4</p>
+            <p className="text-xs text-secondary mt-0.5">This month</p>
+          </div>
+          <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+            <p className="text-xs text-secondary uppercase tracking-wide">New Bookings</p>
+            <p className="text-3xl font-semibold mt-1">5</p>
+            <p className="text-xs text-secondary mt-0.5">This month</p>
+          </div>
+          <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
+            <p className="text-xs text-secondary uppercase tracking-wide">Conversions</p>
+            <p className="text-3xl font-semibold mt-1">1</p>
+            <p className="text-xs text-secondary mt-0.5">This month</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Analytics */}
+      <div className="flex flex-col gap-2">
+        <p className="text-xs font-semibold uppercase tracking-widest text-secondary">Analytics</p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
           <h3 className="text-sm font-semibold text-primary mb-4">Fleet by Brand</h3>
           <div className="flex items-center gap-4">
@@ -127,6 +137,7 @@ export default function AdminDashboard() {
             </BarChart>
           </ResponsiveContainer>
         </div>
+      </div>
       </div>
 
       {/* Top models + overdue + pending */}
