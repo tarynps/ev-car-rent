@@ -98,7 +98,7 @@ export interface AddOn {
 }
 
 export interface ApprovalStep {
-  step: "Submitted" | "Manager Approved" | "Admin Approved" | "Confirmed";
+  step: "Submitted" | "Sales Review" | "Manager Approved" | "Admin Approved" | "Confirmed" | "Contract Generated";
   actorName?: string;
   timestamp?: string;
   status: "done" | "current" | "pending" | "rejected";
