@@ -5,20 +5,19 @@ import { carModels, pricingTiers } from "@/lib/mock-data";
 import { formatBaht } from "@/lib/utils";
 import { notFound } from "next/navigation";
 
-export default function VehicleDetailPage({ params }: { params: { modelId: string } }) {
-  const model = carModels.find((m) => m.id === params.modelId);
+export default async function VehicleDetailPage({ params }: { params: Promise<{ modelId: string }> }) {
+  const { modelId } = await params;
+  const model = carModels.find((m) => m.id === modelId);
   if (!model) return notFound();
 
   const pricing = pricingTiers.find((p) => p.modelId === model.id);
 
   const rates = pricing ? [
-    { label: "1-Day Rate", value: pricing.daily1 },
-    { label: "3-Day Rate", value: pricing.daily3 },
-    { label: "5-Day Rate", value: pricing.daily5 },
-    { label: "Weekly Rate", value: pricing.weekly },
     { label: "Monthly Rate", value: pricing.monthly },
-    { label: "Yearly Rate", value: pricing.yearly },
-    { label: "Rent-to-Sell Rate", value: pricing.rentToSell },
+    { label: "Quarterly Rate", value: pricing.quarterly },
+    { label: "Semi-Annual Rate", value: pricing.semiAnnual },
+    { label: "Annual Rate", value: pricing.annual },
+    { label: "Rent-with-Purchase Rate", value: pricing.rentWithPurchase },
   ] : [];
 
   return (
@@ -28,7 +27,7 @@ export default function VehicleDetailPage({ params }: { params: { modelId: strin
           <ArrowLeft size={18} />
         </Link>
         <div>
-          <h1 className="text-xl font-semibold text-primary">{model.brandName} {model.name}</h1>
+          <h1 className="text-xl font-semibold text-primary">{"JAC"} {model.name}</h1>
           <p className="text-sm text-secondary">{model.year}</p>
         </div>
       </div>
@@ -39,12 +38,12 @@ export default function VehicleDetailPage({ params }: { params: { modelId: strin
           {/* Photo gallery */}
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
             <div className="h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-              <div className="text-8xl font-bold text-gray-300">{model.brandName[0]}</div>
+              <div className="text-8xl font-bold text-gray-300">{"JAC"[0]}</div>
             </div>
             <div className="flex gap-2 p-3 overflow-x-auto">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0 flex items-center justify-center">
-                  <span className="text-2xl font-bold text-gray-300">{model.brandName[0]}</span>
+                  <span className="text-2xl font-bold text-gray-300">{"JAC"[0]}</span>
                 </div>
               ))}
             </div>

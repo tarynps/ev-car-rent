@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans } from "next/font/google";
+import { IBM_Plex_Sans, IBM_Plex_Sans_Thai_Looped } from "next/font/google";
 import "./globals.css";
 import { RoleProvider } from "@/lib/role-context";
 import { ToastProvider } from "@/components/Toast";
 
 const ibmPlexSans = IBM_Plex_Sans({
-  variable: "--font-ibm-plex-sans",
+  variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600"],
+  display: "swap",
+});
+
+const ibmPlexSansThai = IBM_Plex_Sans_Thai_Looped({
+  variable: "--font-thai",
+  subsets: ["thai"],
+  weight: ["300", "400", "500", "600"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -21,8 +29,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${ibmPlexSans.variable} h-full`}>
-      <body className="min-h-full antialiased">
+    <html lang="en" className={`${ibmPlexSans.variable} ${ibmPlexSansThai.variable} h-full`}>
+      <body className="min-h-full font-sans bg-ev-bg text-ev-black antialiased">
         <RoleProvider>
           <ToastProvider>
             {children}

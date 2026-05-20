@@ -13,7 +13,7 @@ export default function VehiclesPage() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const filtered = carModels.filter((m) => {
-    if (brandFilter && m.brandId !== brandFilter) return false;
+    if (brandFilter && m.carType !== brandFilter) return false;
     if (connectorFilter && !m.connectors.includes(connectorFilter as Parameters<typeof m.connectors.includes>[0])) return false;
     if (rangeFilter && m.rangeWltp < Number(rangeFilter)) return false;
     return true;
@@ -62,11 +62,11 @@ export default function VehiclesPage() {
               className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all overflow-hidden block group">
               <div className="h-44 relative overflow-hidden bg-slate-100">
                 {model.photos[0] ? (
-                  <img src={model.photos[0]} alt={`${model.brandName} ${model.name}`}
+                  <img src={model.photos[0]} alt={`${"JAC Motors"} ${model.name}`}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                    <div className="text-4xl font-bold text-gray-300">{model.brandName[0]}</div>
+                    <div className="text-4xl font-bold text-gray-300">{"JAC Motors"[0]}</div>
                   </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-3">
@@ -76,7 +76,7 @@ export default function VehiclesPage() {
               <div className="p-4">
                 <div className="flex items-start justify-between mb-2">
                   <div>
-                    <p className="font-semibold text-primary">{model.brandName} {model.name}</p>
+                    <p className="font-semibold text-primary">{"JAC Motors"} {model.name}</p>
                     <p className="text-xs text-secondary">{model.year}</p>
                   </div>
                   <span className="text-sm font-semibold text-tertiary">{formatBaht(model.priceFrom)}/day</span>
@@ -101,15 +101,15 @@ export default function VehiclesPage() {
               className="bg-white rounded-xl border border-gray-100 shadow-sm hover:border-gray-300 hover:shadow transition-all p-4 flex items-center gap-4">
               <div className="w-20 h-14 rounded-xl overflow-hidden bg-slate-100 shrink-0">
                 {model.photos[0] ? (
-                  <img src={model.photos[0]} alt={`${model.brandName} ${model.name}`} className="w-full h-full object-cover" />
+                  <img src={model.photos[0]} alt={`${"JAC Motors"} ${model.name}`} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <div className="text-2xl font-bold text-gray-300">{model.brandName[0]}</div>
+                    <div className="text-2xl font-bold text-gray-300">{"JAC Motors"[0]}</div>
                   </div>
                 )}
               </div>
               <div className="flex-1">
-                <p className="font-semibold text-primary">{model.brandName} {model.name} · {model.year}</p>
+                <p className="font-semibold text-primary">{"JAC Motors"} {model.name} · {model.year}</p>
                 <div className="flex items-center gap-3 text-xs text-secondary mt-0.5">
                   <span className="flex items-center gap-1"><Zap size={11} />{model.batteryKwh} kWh</span>
                   <span className="flex items-center gap-1"><Navigation size={11} />{model.rangeWltp} km WLTP</span>

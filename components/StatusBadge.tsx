@@ -24,6 +24,12 @@ const colorMap: Record<string, { bg: string; text: string }> = {
   Held:               { bg: "#FEF3C7", text: "#92400E" },
   Refunded:           { bg: "#DCFCE7", text: "#166534" },
   Forfeited:          { bg: "#FEE2E2", text: "#991B1B" },
+  "Expiring Soon":    { bg: "#FFF7ED", text: "#C2410C" },
+  Expired:            { bg: "#F3F4F6", text: "#374151" },
+  Terminated:         { bg: "#FEE2E2", text: "#991B1B" },
+  Charging:           { bg: "#DCFCE7", text: "#166534" },
+  "Not Charging":     { bg: "#F3F4F6", text: "#374151" },
+  Full:               { bg: "#DBEAFE", text: "#1E40AF" },
 };
 
 export default function StatusBadge({ status }: { status: AnyStatus }) {

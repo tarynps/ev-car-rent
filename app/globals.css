@@ -1,27 +1,52 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #000000;
-  --color-secondary: #5F5F5F;
-  --color-tertiary: #0064FF;
-  --color-neutral: #F2EFE8;
-  --color-surface: #FFFFFF;
+  /* Brand core */
+  --color-ev-primary:      #C8102E;
+  --color-ev-primary-dark: #A00D23;
+  --color-ev-primary-tint: #FEF0F2;
+  --color-ev-black:        #000000;
+  --color-ev-muted:        #6B6B6B;
+  --color-ev-dark:         #1D1D1D;
+  --color-ev-surface:      #FFFFFF;
+  --color-ev-bg:           #F5F5F5;
 
-  --font-sans: var(--font-ibm-plex-sans), 'IBM Plex Sans', sans-serif;
-  --font-thai: var(--font-ibm-plex-thai), 'IBM Plex Sans Thai Looped', sans-serif;
-}
+  /* Status / semantic */
+  --color-status-available:          #DCFCE7;
+  --color-status-available-text:     #166534;
+  --color-status-rented:             #DBEAFE;
+  --color-status-rented-text:        #1E40AF;
+  --color-status-maintenance:        #FEF9C3;
+  --color-status-maintenance-text:   #854D0E;
+  --color-status-pending:            #FEF3C7;
+  --color-status-pending-text:       #92400E;
+  --color-status-confirmed:          #DBEAFE;
+  --color-status-confirmed-text:     #1E40AF;
+  --color-status-completed:          #F3F4F6;
+  --color-status-completed-text:     #374151;
+  --color-status-cancelled:          #FEE2E2;
+  --color-status-cancelled-text:     #991B1B;
+  --color-status-sold:               #F3F4F6;
+  --color-status-sold-text:          #374151;
 
-:root {
-  --background: #F2EFE8;
-  --foreground: #000000;
+  --font-sans: var(--font-sans), 'IBM Plex Sans', system-ui, sans-serif;
+  --font-thai: var(--font-thai), 'IBM Plex Sans Thai Looped', system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: #F5F5F5;
+  color: #000000;
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.font-thai {
+.font-thai,
+[lang="th"] {
   font-family: var(--font-thai);
+}
+
+*:focus-visible {
+  outline: 2px solid #C8102E;
+  outline-offset: 2px;
 }

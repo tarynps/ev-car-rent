@@ -1,13 +1,15 @@
 export type CarStatus = "Available" | "Rented" | "Maintenance" | "Sold";
 export type BookingStatus = "Pending" | "Confirmed" | "Active" | "Completed" | "Cancelled";
+export type ContractStatus = "Pending" | "Confirmed" | "Active" | "Expiring Soon" | "Expired" | "Terminated";
 export type KycStatus = "Pending" | "Verified" | "Rejected";
-export type ConversionStatus = "Eligible" | "Renter Confirmed" | "Admin Confirmed" | "Completed";
+export type ConversionStatus = "Eligible" | "Offer Sent" | "Renter Confirmed" | "Client Confirmed" | "Admin Confirmed" | "Completed";
 export type PaymentMethod = "Credit Card" | "Bank Transfer" | "PromptPay";
-export type ContractType = "Rent-and-Return" | "Rent-to-Sell";
-export type DurationType = "Daily" | "Weekly" | "Monthly" | "Yearly" | "Rent-to-Sell";
+export type ContractType = "Rent-and-Return" | "Rent-with-Purchase-Option" | "Rent-to-Sell";
+export type DurationType = "Daily" | "Weekly" | "Monthly" | "Quarterly" | "Semi-Annual" | "Annual" | "Yearly" | "Rent-to-Sell";
 export type ConnectorType = "CCS2" | "Type 2" | "CHAdeMO" | "GB/T";
 export type UserRole = "Super Admin" | "Manager" | "Renter Admin" | "Renter User";
 export type AppRole = "admin" | "renter";
+export type CarType = "6-wheel" | "8-wheel" | "10-wheel" | "Prime Mover" | "Electric Pickup" | "Electric Van";
 
 export interface Brand {
   id: string;
@@ -16,9 +18,10 @@ export interface Brand {
 
 export interface CarModel {
   id: string;
-  brandId: string;
-  brandName: string;
   name: string;
+  brandId?: string;
+  brandName?: string;
+  carType: CarType;
   year: number;
   batteryKwh: number;
   rangeWltp: number;
@@ -26,6 +29,7 @@ export interface CarModel {
   connectors: ConnectorType[];
   maxAcKw: number;
   maxDcKw: number;
+  motorPowerKw?: number;
   photos: string[];
   highlights: string[];
   priceFrom: number;
@@ -35,19 +39,22 @@ export interface Car {
   id: string;
   licensePlate: string;
   modelId: string;
-  brandName: string;
   modelName: string;
+  carType: CarType;
   year: number;
   color: string;
   status: CarStatus;
   rfidCard: string;
   currentRenterId?: string;
   currentRenterName?: string;
+  currentContractId?: string;
   currentBookingId?: string;
   odometer: number;
   photo?: string;
   notes?: string;
-  isRentToSell: boolean;
+  isPurchaseOfferEligible: boolean;
+  isRentToSell?: boolean;
+  brandName?: string;
   statusHistory: StatusHistoryEntry[];
   maintenanceLogs: MaintenanceLog[];
   insurance: InsuranceRecord;
@@ -80,7 +87,7 @@ export interface InsuranceRecord {
 export interface OdometerLog {
   date: string;
   reading: number;
-  bookingId?: string;
+  contractId?: string;
 }
 
 export interface Location {
@@ -96,7 +103,7 @@ export interface AddOn {
 }
 
 export interface ApprovalStep {
-  step: "Submitted" | "Manager Approved" | "Admin Approved" | "Confirmed";
+  step: "Submitted" | "Manager Approved" | "Admin Approved" | "Active" | "Confirmed";
   actorName?: string;
   timestamp?: string;
   status: "done" | "current" | "pending" | "rejected";
@@ -143,9 +150,45 @@ export interface ExtensionRequest {
   reason?: string;
 }
 
+export interface ContractVehicleGroup {
+  carType: CarType;
+  modelId: string;
+  modelName: string;
+  licensePlates: string[];
+  quantity: number;
+  ratePerUnit: number;
+}
+
+export interface Contract {
+  id: string;
+  companyId: string;
+  companyName: string;
+  renterName: string;
+  renterPhone: string;
+  renterEmail: string;
+  vehicleGroups: ContractVehicleGroup[];
+  status: ContractStatus;
+  contractType: ContractType;
+  durationType: DurationType;
+  pickupDate: string;
+  returnDate: string;
+  pickupLocationId: string;
+  pickupLocationName: string;
+  returnLocationId: string;
+  returnLocationName: string;
+  deposit: number;
+  vat: number;
+  total: number;
+  approvalSteps: ApprovalStep[];
+  createdAt: string;
+  extensionRequest?: ExtensionRequest;
+  terminationReason?: string;
+}
+
 export interface Company {
   id: string;
   name: string;
+  industry: string;
   address: string;
   taxId: string;
   billingEmail: string;
@@ -155,10 +198,12 @@ export interface Company {
   kycStatus: KycStatus;
   kycDocuments: KycDocument[];
   users: CompanyUser[];
-  creditLimit: number;
-  maxActiveRentals: number;
-  activeRentals: number;
+  activeContracts: number;
+  totalVehiclesRented: number;
   status: "Active" | "Inactive";
+  creditLimit?: number;
+  activeRentals?: number;
+  maxActiveRentals?: number;
 }
 
 export interface KycDocument {
@@ -178,22 +223,27 @@ export interface CompanyUser {
 export interface PricingTier {
   modelId: string;
   modelName: string;
-  daily1: number;
-  daily3: number;
-  daily5: number;
-  weekly: number;
+  carType: CarType;
   monthly: number;
-  yearly: number;
-  rentToSell: number;
+  quarterly: number;
+  semiAnnual: number;
+  annual: number;
+  rentWithPurchase: number;
   deposit: number;
-  addonCharger: number;
-  addonChildSeat: number;
-  addonInsurance: number;
+  daily1?: number;
+  daily3?: number;
+  daily5?: number;
+  weekly?: number;
+  yearly?: number;
+  rentToSell?: number;
+  addonCharger?: number;
+  addonChildSeat?: number;
+  addonInsurance?: number;
 }
 
 export interface Transaction {
   id: string;
-  bookingId: string;
+  contractId: string;
   companyName: string;
   amount: number;
   type: "Deposit" | "Rental Fee" | "Late Fee" | "Deposit Refund" | "Deposit Forfeit";
@@ -201,6 +251,7 @@ export interface Transaction {
   status: "Completed" | "Pending" | "Failed";
   date: string;
   depositStatus?: "Held" | "Refunded" | "Forfeited";
+  bookingId?: string;
 }
 
 export interface ChargingCost {
@@ -216,7 +267,7 @@ export interface ChargingCost {
 export interface Invoice {
   id: string;
   invoiceNumber: string;
-  bookingId: string;
+  contractId: string;
   companyName: string;
   amount: number;
   vat: number;
@@ -226,26 +277,45 @@ export interface Invoice {
 }
 
 export interface RentToSellEntry {
+  id: string;
   carId: string;
   licensePlate: string;
   modelName: string;
-  brandName: string;
+  brandName?: string;
   companyName: string;
+  companyId: string;
   contractStart: string;
   totalPaid: number;
   buyoutAmount: number;
   conversionStatus: ConversionStatus;
-  bookingId: string;
+  bookingId?: string;
+}
+
+export interface PurchaseOffer {
+  id: string;
+  carId: string;
+  licensePlate: string;
+  modelName: string;
+  carType: CarType;
+  companyName: string;
+  companyId: string;
+  contractId: string;
+  contractStart: string;
+  totalPaid: number;
+  buyoutAmount: number;
+  conversionStatus: ConversionStatus;
+  offerSentAt?: string;
+  offerExpiryDate?: string;
 }
 
 export interface AppNotification {
   id: string;
-  type: "approval" | "rejection" | "reminder" | "invoice" | "contract" | "conversion";
+  type: "approval" | "rejection" | "reminder" | "invoice" | "contract" | "purchase-offer" | "telematics" | "conversion";
   title: string;
   message: string;
   createdAt: string;
   read: boolean;
-  bookingId?: string;
+  contractId?: string;
 }
 
 export interface AdminUser {
@@ -254,4 +324,102 @@ export interface AdminUser {
   email: string;
   role: "Super Admin" | "Manager";
   createdAt: string;
+}
+
+// ─── Fleet Contracts (v2 Renter) ──────────────────────────────────────────────
+export interface ContractVehicleEntry {
+  carId: string;
+  licensePlate: string;
+  modelId: string;
+  modelName: string;
+  brandName: string;
+  photo?: string;
+}
+
+export interface PurchaseOfferDetail {
+  vehicleId: string;
+  licensePlate: string;
+  modelName: string;
+  brandName: string;
+  buyoutAmount: number;
+  offerExpiry: string;
+  totalPaid: number;
+}
+
+export interface FleetContract {
+  id: string;
+  companyId: string;
+  companyName: string;
+  status: "Pending" | "Active" | "Expiring Soon" | "Expired" | "Terminated";
+  contractType: "Rent-and-Return" | "Rent-with-Purchase-Option";
+  startDate: string;
+  endDate: string;
+  pickupLocationId: string;
+  pickupLocationName: string;
+  returnLocationId: string;
+  returnLocationName: string;
+  vehicles: ContractVehicleEntry[];
+  totalAmount: number;
+  deposit: number;
+  vat: number;
+  baseRate: number;
+  createdAt: string;
+  purchaseOfferAvailable?: boolean;
+  purchaseOffers?: PurchaseOfferDetail[];
+  approvalSteps: ApprovalStep[];
+}
+
+// ─── Telematics (v2 Renter) ───────────────────────────────────────────────────
+export interface VehicleTelematics {
+  vehicleId: string;
+  licensePlate: string;
+  modelName: string;
+  brandName: string;
+  lat: number;
+  lng: number;
+  speed: number;
+  soc: number;
+  chargingStatus: "Charging" | "Not Charging" | "Full";
+  ignition: "On" | "Off";
+  odometer: number;
+  estimatedRange: number;
+  doorStatus: "Open" | "Closed";
+  lastUpdated: string;
+  companyId: string;
+}
+
+export interface TripRecord {
+  id: string;
+  vehicleId: string;
+  startLocation: string;
+  endLocation: string;
+  startTime: string;
+  endTime: string;
+  distanceKm: number;
+  durationMin: number;
+  date: string;
+}
+
+export interface ChargingSessionRecord {
+  id: string;
+  vehicleId: string;
+  date: string;
+  location: string;
+  durationMin: number;
+  kwhCharged: number;
+  cost: number;
+}
+
+export interface DriverBehaviorEvent {
+  id: string;
+  vehicleId: string;
+  timestamp: string;
+  type: "Hard Brake" | "Rapid Acceleration" | "Speeding" | "Idle";
+  location: string;
+  severity: "Low" | "Medium" | "High";
+}
+
+export interface SocHistoryEntry {
+  date: string;
+  soc: number;
 }
