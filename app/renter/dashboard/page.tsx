@@ -344,7 +344,7 @@ export default function RenterDashboard() {
           </div>
           <div className="divide-y divide-gray-50">
             {fleetTelemetry.map(({ booking, car, telemetry }) => (
-              <Link key={booking.id} href={`/renter/bookings/${booking.id}`} className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr_auto] gap-3 px-5 py-3 hover:bg-gray-50/60 transition-colors">
+              <Link key={booking.id} href={`/renter/telematics/${booking.carId}`} className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr_auto] gap-3 px-5 py-3 hover:bg-gray-50/60 transition-colors">
                 <div>
                   <p className="text-sm font-semibold text-primary">{booking.brandName} {booking.modelName}</p>
                   <p className="text-xs text-secondary">{booking.licensePlate} · {getVehicleCategory(booking.modelId)}</p>

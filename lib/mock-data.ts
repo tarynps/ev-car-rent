@@ -860,6 +860,49 @@ export const contracts: Contract[] = [
     ],
     createdAt: "2026-05-15",
   },
+  {
+    id: "ct7", companyId: "c1", companyName: "Siam Motors Group",
+    contactName: "Natthapong Charoenwong", contactPhone: "081-234-5678", contactEmail: "natthapong@siammotors.co.th",
+    contractType: "Rent-and-Return", durationType: "Monthly",
+    startDate: "2026-04-01", endDate: "2026-06-30",
+    pickupLocationId: "l1", pickupLocationName: "Sukhumvit Service Center",
+    returnLocationId: "l1", returnLocationName: "Sukhumvit Service Center",
+    lines: [
+      { modelId: "m1", modelName: "N55 EV", brandName: "JAC", assignedCars: [{ carId: "car2", licensePlate: "ขข 5678 กทม" }], baseRate: 25000 },
+      { modelId: "m4", modelName: "M3 EV", brandName: "JAC", assignedCars: [{ carId: "car10", licensePlate: "ซซ 1111 กทม" }], baseRate: 27000 },
+    ],
+    addOns: { portableCharger: false, childSeat: false, extraInsurance: true },
+    deposit: 60000, vat: 3640, total: 135640,
+    status: "Active",
+    approvalSteps: [
+      { step: "Submitted", actorName: "Natthapong Charoenwong", timestamp: "2026-03-20 10:00", status: "done" },
+      { step: "Manager Approved", actorName: "Thanakorn Pattanapong", timestamp: "2026-03-21 14:00", status: "done" },
+      { step: "Admin Approved", actorName: "Siriporn W.", timestamp: "2026-03-22 09:00", status: "done" },
+      { step: "Confirmed", actorName: "System", timestamp: "2026-03-22 09:01", status: "done" },
+    ],
+    createdAt: "2026-03-20",
+  },
+  {
+    id: "ct8", companyId: "c1", companyName: "Siam Motors Group",
+    contactName: "Siriporn Wirlyakul", contactPhone: "081-234-5679", contactEmail: "siriporn@siammotors.co.th",
+    contractType: "Rent-and-Return", durationType: "Weekly",
+    startDate: "2026-05-05", endDate: "2026-05-25",
+    pickupLocationId: "l2", pickupLocationName: "Silom Office Hub",
+    returnLocationId: "l2", returnLocationName: "Silom Office Hub",
+    lines: [
+      { modelId: "m7", modelName: "N-Series", bodyType: "Sweeper", brandName: "JAC", assignedCars: [{ carId: "car7", licensePlate: "ชช 9999 กทม" }], baseRate: 9500 },
+    ],
+    addOns: { portableCharger: true, childSeat: false, extraInsurance: false },
+    deposit: 42000, vat: 665, total: 51665,
+    status: "Confirmed",
+    approvalSteps: [
+      { step: "Submitted", actorName: "Siriporn Wirlyakul", timestamp: "2026-05-01 08:00", status: "done" },
+      { step: "Manager Approved", actorName: "Thanakorn Pattanapong", timestamp: "2026-05-02 11:00", status: "done" },
+      { step: "Admin Approved", status: "current" },
+      { step: "Confirmed", status: "pending" },
+    ],
+    createdAt: "2026-05-01",
+  },
 ];
 
 // ─── Rent Requests ────────────────────────────────────────────────────────────
