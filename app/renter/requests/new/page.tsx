@@ -43,7 +43,7 @@ function getMonthlyRate(modelId: string) {
   return pricingTiers.find((tier) => tier.modelId === modelId)?.monthly ?? carModels.find((model) => model.id === modelId)?.priceFrom ?? 0;
 }
 
-export default function NewBookingPage() {
+export default function NewRequestPage() {
   return (
     <Suspense fallback={<div className="p-8 text-secondary">Loading...</div>}>
       <NewRequestContent />
@@ -104,7 +104,7 @@ function NewRequestContent() {
 
   function submit() {
     toast("success", "Contract request submitted. Awaiting renter manager and admin approval.");
-    router.push("/renter/bookings");
+    router.push("/renter/fleet");
   }
 
   return (

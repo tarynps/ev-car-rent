@@ -67,7 +67,7 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
           </div>
         </div>
         <Link
-          href={`/renter/bookings/new?model=${model.id}`}
+          href={`/renter/requests/new?model=${model.id}`}
           className="inline-flex items-center justify-center gap-2 bg-tertiary text-white text-sm px-4 py-2 rounded-lg hover:bg-tertiary-dark transition-colors"
         >
           Add to Request
@@ -171,7 +171,7 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
           </div>
 
           <Link
-            href={`/renter/bookings/new?model=${model.id}`}
+            href={`/renter/requests/new?model=${model.id}`}
             className="bg-tertiary text-white text-center py-3 px-4 rounded-xl font-medium hover:bg-tertiary-dark transition-colors"
           >
             Add to Request

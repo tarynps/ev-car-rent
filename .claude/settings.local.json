@@ -14,7 +14,16 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001/admin/models)",
       "Bash(cat /tmp/next-dev.log | tail -20)",
       "Bash(kill 16363)",
-      "Bash(mkdir -p \"/Users/punnasikasunyano/Vibe Coding/ev-car-rent/.claude/worktrees/xenodochial-antonelli-80d5e5/app/admin/requests/[id]\")"
+      "Bash(mkdir -p \"/Users/punnasikasunyano/Vibe Coding/ev-car-rent/.claude/worktrees/xenodochial-antonelli-80d5e5/app/admin/requests/[id]\")",
+      "Bash(git -C \"/Users/punnasikasunyano/Vibe Coding/ev-car-rent/.claude/worktrees/xenodochial-antonelli-80d5e5\" add app/renter/fleet/page.tsx)",
+      "Bash(git -C '/Users/punnasikasunyano/Vibe Coding/ev-car-rent/.claude/worktrees/xenodochial-antonelli-80d5e5' commit -m ' *)",
+      "Bash(git -C \"/Users/punnasikasunyano/Vibe Coding/ev-car-rent/.claude/worktrees/xenodochial-antonelli-80d5e5\" push)",
+      "Bash(git -C \"/Users/punnasikasunyano/Vibe Coding/ev-car-rent/.claude/worktrees/xenodochial-antonelli-80d5e5\" add app/admin/companies/[id]/page.tsx)",
+      "Bash(git -C \"/Users/punnasikasunyano/Vibe Coding/ev-car-rent/.claude/worktrees/xenodochial-antonelli-80d5e5\" add \"app/admin/companies/[id]/page.tsx\")",
+      "Bash(git push *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(ls \"/Users/punnasikasunyano/.claude/projects/-Users-punnasikasunyano-Vibe-Coding-ev-car-rent/memory/\" 2>/dev/null || echo \"empty\")"
     ]
   }
 }

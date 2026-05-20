@@ -58,7 +58,7 @@ export default function VehiclesPage() {
           <p className="text-sm text-secondary mt-0.5">{filtered.length} EV models available for corporate contracts</p>
         </div>
         <Link
-          href="/renter/bookings/new"
+          href="/renter/requests/new"
           className="inline-flex items-center justify-center gap-2 bg-tertiary text-white text-sm px-4 py-2 rounded-lg hover:bg-tertiary-dark transition-colors"
         >
           Request a Quote <ArrowRight size={14} />

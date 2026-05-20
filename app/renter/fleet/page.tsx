@@ -67,7 +67,7 @@ export default function RenterFleetPage() {
               <Grid2X2 size={15} />
             </button>
           </div>
-          <Link href="/renter/bookings/new"
+          <Link href="/renter/requests/new"
             className="flex items-center gap-2 bg-tertiary text-white text-sm px-4 py-2 rounded-lg hover:bg-tertiary-dark transition-colors">
             <Plus size={15} /> New Contract Request
           </Link>
