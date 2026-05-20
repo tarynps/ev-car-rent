@@ -18,7 +18,7 @@ export function daysBetween(start: string, end: string): number {
 }
 
 export function daysUntil(dateStr: string): number {
-  const now = new Date("2026-05-15");
+  const now = new Date("2026-05-20");
   const target = new Date(dateStr);
   return Math.ceil((target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 }

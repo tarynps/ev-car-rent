@@ -1,243 +1,245 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Plus, Edit2, Trash2 } from "lucide-react";
+import { Plus, Edit2, Trash2, Zap, Navigation } from "lucide-react";
 import Modal from "@/components/Modal";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import FileUpload from "@/components/FileUpload";
-import EVSpecCard from "@/components/EVSpecCard";
-import { brands as initialBrands, carModels as initialModels } from "@/lib/mock-data";
-import type { Brand, CarModel, ConnectorType } from "@/lib/types";
+import { carModels as initialModels } from "@/lib/mock-data";
+import type { CarModel, ConnectorType } from "@/lib/types";
 
 const ALL_CONNECTORS: ConnectorType[] = ["CCS2", "Type 2", "CHAdeMO", "GB/T"];
 
+const CAR_TYPES = ["6-wheel", "8-wheel", "10-wheel", "Prime Mover", "Electric Pickup", "Electric Van"] as const;
+
 export default function ModelsPage() {
-  const [brands, setBrands] = useState(initialBrands);
   const [models, setModels] = useState(initialModels);
-  const [expanded, setExpanded] = useState<string[]>(["b1"]);
-  const [brandModal, setBrandModal] = useState<{ open: boolean; editing?: Brand }>({ open: false });
-  const [modelModal, setModelModal] = useState<{ open: boolean; brandId?: string; editing?: CarModel }>({ open: false });
-  const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; type: "brand" | "model"; id: string }>({ open: false, type: "brand", id: "" });
-  const [brandForm, setBrandForm] = useState({ name: "" });
-  const [modelForm, setModelForm] = useState({
-    name: "", year: "2024", batteryKwh: "", rangeWltp: "", rangeNedc: "",
-    connectors: [] as ConnectorType[], maxAcKw: "", maxDcKw: "", highlights: "",
+  const [modal, setModal] = useState<{ open: boolean; editing?: CarModel }>({ open: false });
+  const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; id: string }>({ open: false, id: "" });
+  const [form, setForm] = useState({
+    name: "", carType: "6-wheel", year: "2024",
+    batteryKwh: "", rangeWltp: "", rangeNedc: "",
+    connectors: [] as ConnectorType[], maxAcKw: "", maxDcKw: "",
+    motorPowerKw: "", highlights: "",
   });
 
-  function toggleBrand(id: string) {
-    setExpanded((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
+  function openAdd() {
+    setForm({ name: "", carType: "6-wheel", year: "2024", batteryKwh: "", rangeWltp: "", rangeNedc: "", connectors: [], maxAcKw: "", maxDcKw: "", motorPowerKw: "", highlights: "" });
+    setModal({ open: true });
   }
 
-  function saveBrand() {
-    if (!brandForm.name) return;
-    if (brandModal.editing) {
-      setBrands((prev) => prev.map((b) => b.id === brandModal.editing!.id ? { ...b, name: brandForm.name } : b));
-    } else {
-      setBrands((prev) => [...prev, { id: `b${Date.now()}`, name: brandForm.name }]);
-    }
-    setBrandModal({ open: false });
-    setBrandForm({ name: "" });
+  function openEdit(m: CarModel) {
+    setForm({
+      name: m.name, carType: m.carType, year: String(m.year),
+      batteryKwh: String(m.batteryKwh), rangeWltp: String(m.rangeWltp), rangeNedc: String(m.rangeNedc),
+      connectors: m.connectors, maxAcKw: String(m.maxAcKw), maxDcKw: String(m.maxDcKw),
+      motorPowerKw: String(m.motorPowerKw ?? ""), highlights: m.highlights.join("\n"),
+    });
+    setModal({ open: true, editing: m });
   }
 
-  function saveModel(brandId: string) {
-    const newModel: CarModel = {
-      id: modelModal.editing?.id ?? `m${Date.now()}`,
-      brandId,
-      brandName: brands.find((b) => b.id === brandId)?.name ?? "",
-      name: modelForm.name,
-      year: Number(modelForm.year),
-      batteryKwh: Number(modelForm.batteryKwh),
-      rangeWltp: Number(modelForm.rangeWltp),
-      rangeNedc: Number(modelForm.rangeNedc),
-      connectors: modelForm.connectors,
-      maxAcKw: Number(modelForm.maxAcKw),
-      maxDcKw: Number(modelForm.maxDcKw),
-      photos: [],
-      highlights: modelForm.highlights.split("\n").filter(Boolean),
-      priceFrom: 0,
+  function save() {
+    if (!form.name || !form.batteryKwh) return;
+    const entry: CarModel = {
+      id: modal.editing?.id ?? `m${Date.now()}`,
+      name: form.name,
+      carType: form.carType as CarModel["carType"],
+      year: Number(form.year),
+      batteryKwh: Number(form.batteryKwh),
+      rangeWltp: Number(form.rangeWltp),
+      rangeNedc: Number(form.rangeNedc),
+      connectors: form.connectors,
+      maxAcKw: Number(form.maxAcKw),
+      maxDcKw: Number(form.maxDcKw),
+      motorPowerKw: form.motorPowerKw ? Number(form.motorPowerKw) : undefined,
+      photos: modal.editing?.photos ?? [],
+      highlights: form.highlights.split("\n").filter(Boolean),
+      priceFrom: modal.editing?.priceFrom ?? 0,
     };
-    if (modelModal.editing) {
-      setModels((prev) => prev.map((m) => m.id === modelModal.editing!.id ? newModel : m));
+    if (modal.editing) {
+      setModels((prev) => prev.map((m) => m.id === modal.editing!.id ? entry : m));
     } else {
-      setModels((prev) => [...prev, newModel]);
+      setModels((prev) => [...prev, entry]);
     }
-    setModelModal({ open: false });
+    setModal({ open: false });
   }
 
   function toggleConnector(c: ConnectorType) {
-    setModelForm((prev) => ({
+    setForm((prev) => ({
       ...prev,
       connectors: prev.connectors.includes(c) ? prev.connectors.filter((x) => x !== c) : [...prev.connectors, c],
     }));
-  }
-
-  function openEditModel(m: CarModel) {
-    setModelForm({
-      name: m.name, year: String(m.year), batteryKwh: String(m.batteryKwh),
-      rangeWltp: String(m.rangeWltp), rangeNedc: String(m.rangeNedc),
-      connectors: m.connectors, maxAcKw: String(m.maxAcKw), maxDcKw: String(m.maxDcKw),
-      highlights: m.highlights.join("\n"),
-    });
-    setModelModal({ open: true, brandId: m.brandId, editing: m });
   }
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-primary">Car Brand & Model Master Data</h1>
-          <p className="text-sm text-secondary mt-0.5">{brands.length} brands · {models.length} models</p>
+          <h1 className="text-xl font-semibold text-ev-black">JAC Model Catalogue</h1>
+          <p className="text-sm text-ev-muted mt-0.5">JAC Motors · {models.length} models</p>
         </div>
-        <button onClick={() => { setBrandForm({ name: "" }); setBrandModal({ open: true }); }}
-          className="flex items-center gap-2 bg-black text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors">
-          <Plus size={15} /> Add Brand
+        <button onClick={openAdd}
+          className="flex items-center gap-2 bg-ev-primary hover:bg-ev-primary-dark text-white text-sm px-4 py-2 rounded-lg transition-colors">
+          <Plus size={15} /> Add Model
         </button>
       </div>
 
-      <div className="flex flex-col gap-3">
-        {brands.map((brand) => {
-          const brandModels = models.filter((m) => m.brandId === brand.id);
-          const isExpanded = expanded.includes(brand.id);
-          return (
-            <div key={brand.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="flex items-center gap-3 px-5 py-4 cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => toggleBrand(brand.id)}>
-                {isExpanded ? <ChevronDown size={16} className="text-secondary" /> : <ChevronRight size={16} className="text-secondary" />}
-                <span className="font-semibold text-primary">{brand.name}</span>
-                <span className="text-xs text-secondary ml-1">{brandModels.length} models</span>
-                <div className="ml-auto flex gap-2" onClick={(e) => e.stopPropagation()}>
-                  <button onClick={() => {
-                    setModelForm({ name: "", year: "2024", batteryKwh: "", rangeWltp: "", rangeNedc: "", connectors: [], maxAcKw: "", maxDcKw: "", highlights: "" });
-                    setModelModal({ open: true, brandId: brand.id });
-                  }} className="flex items-center gap-1 text-xs text-tertiary hover:underline">
-                    <Plus size={12} /> Add Model
-                  </button>
-                  <button onClick={() => { setBrandForm({ name: brand.name }); setBrandModal({ open: true, editing: brand }); }}
-                    className="p-1 text-secondary hover:text-primary transition-colors">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {models.map((model) => (
+          <div key={model.id} className="bg-ev-surface border border-gray-100 rounded-xl overflow-hidden">
+            {/* Photo */}
+            <div className="h-40 bg-gray-100 overflow-hidden">
+              {model.photos[0] ? (
+                <img src={model.photos[0]} alt={`JAC ${model.name}`} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="text-4xl font-bold text-gray-200">JAC</span>
+                </div>
+              )}
+            </div>
+
+            <div className="p-4 flex flex-col gap-3">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="font-semibold text-ev-black">JAC {model.name}</p>
+                  <p className="text-xs text-ev-muted">{model.carType} · {model.year}</p>
+                </div>
+                <div className="flex gap-1">
+                  <button onClick={() => openEdit(model)} className="p-1.5 text-ev-muted hover:text-ev-black transition-colors">
                     <Edit2 size={13} />
                   </button>
-                  <button onClick={() => setDeleteConfirm({ open: true, type: "brand", id: brand.id })}
-                    className="p-1 text-secondary hover:text-red-500 transition-colors">
+                  <button onClick={() => setDeleteConfirm({ open: true, id: model.id })}
+                    className="p-1.5 text-ev-muted hover:text-red-500 transition-colors">
                     <Trash2 size={13} />
                   </button>
                 </div>
               </div>
-              {isExpanded && brandModels.length > 0 && (
-                <div className="border-t border-gray-100 px-5 py-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {brandModels.map((model) => (
-                    <div key={model.id} className="border border-gray-100 rounded-xl p-4 flex flex-col gap-3">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <p className="font-semibold text-primary">{model.name}</p>
-                          <p className="text-xs text-secondary">{model.year}</p>
-                        </div>
-                        <div className="flex gap-1">
-                          <button onClick={() => openEditModel(model)} className="p-1.5 text-secondary hover:text-primary transition-colors">
-                            <Edit2 size={13} />
-                          </button>
-                          <button onClick={() => setDeleteConfirm({ open: true, type: "model", id: model.id })}
-                            className="p-1.5 text-secondary hover:text-red-500 transition-colors">
-                            <Trash2 size={13} />
-                          </button>
-                        </div>
-                      </div>
-                      <EVSpecCard model={model} />
-                      {model.highlights.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {model.highlights.map((h) => (
-                            <span key={h} className="text-xs bg-gray-100 px-2 py-0.5 rounded-full text-secondary">{h}</span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+
+              {/* EV specs */}
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { label: "Battery", value: `${model.batteryKwh} kWh` },
+                  { label: "WLTP", value: `${model.rangeWltp} km` },
+                  { label: "Motor", value: model.motorPowerKw ? `${model.motorPowerKw} kW` : "—" },
+                ].map(({ label, value }) => (
+                  <div key={label} className="border border-gray-100 rounded-lg px-2 py-1.5 text-center">
+                    <p className="text-[10px] text-ev-muted">{label}</p>
+                    <p className="text-xs font-semibold text-ev-black mt-0.5">{value}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Charging */}
+              <div className="flex items-center gap-3 text-xs text-ev-muted">
+                <span className="flex items-center gap-1"><Zap size={10} /> AC {model.maxAcKw} kW · DC {model.maxDcKw} kW</span>
+                <span className="flex items-center gap-1"><Navigation size={10} /> {model.rangeNedc} km NEDC</span>
+              </div>
+
+              {/* Connectors */}
+              <div className="flex gap-1 flex-wrap">
+                {model.connectors.map((c) => (
+                  <span key={c} className="text-[10px] bg-gray-100 px-2 py-0.5 rounded-full text-ev-muted">{c}</span>
+                ))}
+              </div>
+
+              {/* Highlights */}
+              {model.highlights.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {model.highlights.slice(0, 3).map((h) => (
+                    <span key={h} className="text-[10px] bg-ev-primary-tint text-ev-primary px-2 py-0.5 rounded-full">{h}</span>
                   ))}
                 </div>
               )}
-              {isExpanded && brandModels.length === 0 && (
-                <div className="border-t border-gray-100 px-5 py-4 text-sm text-secondary">No models yet.</div>
-              )}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
 
-      {/* Brand Modal */}
-      <Modal open={brandModal.open} onClose={() => setBrandModal({ open: false })} title={brandModal.editing ? "Edit Brand" : "Add Brand"}>
-        <div className="flex flex-col gap-4">
-          <div>
-            <label className="text-xs font-medium text-secondary block mb-1">Brand Name *</label>
-            <input value={brandForm.name} onChange={(e) => setBrandForm({ name: e.target.value })}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" placeholder="e.g. Tesla" />
-          </div>
-          <div className="flex gap-2 justify-end">
-            <button onClick={() => setBrandModal({ open: false })} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
-            <button onClick={saveBrand} className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800">Save</button>
-          </div>
-        </div>
-      </Modal>
-
       {/* Model Modal */}
-      <Modal open={modelModal.open} onClose={() => setModelModal({ open: false })} title={modelModal.editing ? "Edit Model" : "Add Model"} width="max-w-2xl">
+      <Modal open={modal.open} onClose={() => setModal({ open: false })} title={modal.editing ? "Edit Model" : "Add JAC Model"} width="max-w-2xl">
         <div className="flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-secondary block mb-1">Model Name *</label>
-              <input value={modelForm.name} onChange={(e) => setModelForm({ ...modelForm, name: e.target.value })}
+              <label className="text-xs font-medium text-ev-muted block mb-1">Model Name *</label>
+              <div className="flex">
+                <span className="border border-r-0 border-gray-200 rounded-l-lg bg-gray-50 px-3 py-2 text-sm text-ev-muted">JAC</span>
+                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="flex-1 border border-gray-200 rounded-r-lg px-3 py-2 text-sm" placeholder="N42EV" />
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-ev-muted block mb-1">Car Type *</label>
+              <select value={form.carType} onChange={(e) => setForm({ ...form, carType: e.target.value })}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white">
+                {CAR_TYPES.map((t) => <option key={t}>{t}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-ev-muted block mb-1">Year</label>
+              <input value={form.year} type="number" onChange={(e) => setForm({ ...form, year: e.target.value })}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
             </div>
             <div>
-              <label className="text-xs font-medium text-secondary block mb-1">Year</label>
-              <input value={modelForm.year} onChange={(e) => setModelForm({ ...modelForm, year: e.target.value })}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" type="number" />
+              <label className="text-xs font-medium text-ev-muted block mb-1">Battery (kWh) *</label>
+              <input value={form.batteryKwh} type="number" onChange={(e) => setForm({ ...form, batteryKwh: e.target.value })}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
             </div>
             <div>
-              <label className="text-xs font-medium text-secondary block mb-1">Battery (kWh)</label>
-              <input value={modelForm.batteryKwh} onChange={(e) => setModelForm({ ...modelForm, batteryKwh: e.target.value })}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" type="number" />
+              <label className="text-xs font-medium text-ev-muted block mb-1">WLTP Range (km)</label>
+              <input value={form.rangeWltp} type="number" onChange={(e) => setForm({ ...form, rangeWltp: e.target.value })}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
             </div>
             <div>
-              <label className="text-xs font-medium text-secondary block mb-1">Range WLTP (km)</label>
-              <input value={modelForm.rangeWltp} onChange={(e) => setModelForm({ ...modelForm, rangeWltp: e.target.value })}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" type="number" />
+              <label className="text-xs font-medium text-ev-muted block mb-1">NEDC Range (km)</label>
+              <input value={form.rangeNedc} type="number" onChange={(e) => setForm({ ...form, rangeNedc: e.target.value })}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
             </div>
             <div>
-              <label className="text-xs font-medium text-secondary block mb-1">Range NEDC (km)</label>
-              <input value={modelForm.rangeNedc} onChange={(e) => setModelForm({ ...modelForm, rangeNedc: e.target.value })}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" type="number" />
+              <label className="text-xs font-medium text-ev-muted block mb-1">Max AC (kW)</label>
+              <input value={form.maxAcKw} type="number" onChange={(e) => setForm({ ...form, maxAcKw: e.target.value })}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
             </div>
             <div>
-              <label className="text-xs font-medium text-secondary block mb-1">Max AC (kW)</label>
-              <input value={modelForm.maxAcKw} onChange={(e) => setModelForm({ ...modelForm, maxAcKw: e.target.value })}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" type="number" />
+              <label className="text-xs font-medium text-ev-muted block mb-1">Max DC (kW)</label>
+              <input value={form.maxDcKw} type="number" onChange={(e) => setForm({ ...form, maxDcKw: e.target.value })}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
             </div>
             <div>
-              <label className="text-xs font-medium text-secondary block mb-1">Max DC (kW)</label>
-              <input value={modelForm.maxDcKw} onChange={(e) => setModelForm({ ...modelForm, maxDcKw: e.target.value })}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" type="number" />
+              <label className="text-xs font-medium text-ev-muted block mb-1">Motor Power (kW)</label>
+              <input value={form.motorPowerKw} type="number" onChange={(e) => setForm({ ...form, motorPowerKw: e.target.value })}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" />
             </div>
           </div>
+
           <div>
-            <label className="text-xs font-medium text-secondary block mb-2">Connectors</label>
+            <label className="text-xs font-medium text-ev-muted block mb-2">Connectors</label>
             <div className="flex gap-2 flex-wrap">
               {ALL_CONNECTORS.map((c) => (
-                <button key={c} onClick={() => toggleConnector(c)}
-                  className={`px-3 py-1 text-xs rounded-full border transition-colors ${modelForm.connectors.includes(c) ? "bg-black text-white border-black" : "border-gray-200 text-secondary hover:border-gray-400"}`}>
+                <button key={c} type="button" onClick={() => toggleConnector(c)}
+                  className={`px-3 py-1 text-xs rounded-full border transition-colors ${form.connectors.includes(c) ? "bg-ev-primary text-white border-ev-primary" : "border-gray-200 text-ev-muted hover:border-gray-400"}`}>
                   {c}
                 </button>
               ))}
             </div>
           </div>
+
           <div>
-            <label className="text-xs font-medium text-secondary block mb-1">Feature Highlights (one per line)</label>
-            <textarea value={modelForm.highlights} onChange={(e) => setModelForm({ ...modelForm, highlights: e.target.value })}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none" rows={3} placeholder="Autopilot&#10;15.4 Touchscreen&#10;OTA Updates" />
+            <label className="text-xs font-medium text-ev-muted block mb-1">Feature Highlights (one per line)</label>
+            <textarea value={form.highlights} onChange={(e) => setForm({ ...form, highlights: e.target.value })}
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none" rows={3}
+              placeholder="100 kWh LFP Battery&#10;260 km WLTP Range&#10;10-tonne payload" />
           </div>
+
           <div>
-            <label className="text-xs font-medium text-secondary block mb-1">Model Photos</label>
+            <label className="text-xs font-medium text-ev-muted block mb-1">Model Photos</label>
             <FileUpload label="Upload photos" accept="image/*" multiple />
           </div>
+
           <div className="flex gap-2 justify-end">
-            <button onClick={() => setModelModal({ open: false })} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
-            <button onClick={() => saveModel(modelModal.brandId!)} className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800">Save Model</button>
+            <button onClick={() => setModal({ open: false })} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
+            <button onClick={save} className="px-4 py-2 text-sm bg-ev-primary hover:bg-ev-primary-dark text-white rounded-lg transition-colors">
+              {modal.editing ? "Save Changes" : "Add Model"}
+            </button>
           </div>
         </div>
       </Modal>
@@ -245,12 +247,9 @@ export default function ModelsPage() {
       <ConfirmDialog
         open={deleteConfirm.open}
         onClose={() => setDeleteConfirm({ ...deleteConfirm, open: false })}
-        onConfirm={() => {
-          if (deleteConfirm.type === "brand") setBrands((prev) => prev.filter((b) => b.id !== deleteConfirm.id));
-          else setModels((prev) => prev.filter((m) => m.id !== deleteConfirm.id));
-        }}
-        title={`Delete ${deleteConfirm.type === "brand" ? "Brand" : "Model"}`}
-        message={`Are you sure you want to delete this ${deleteConfirm.type}? This action cannot be undone.`}
+        onConfirm={() => setModels((prev) => prev.filter((m) => m.id !== deleteConfirm.id))}
+        title="Delete Model"
+        message="Are you sure you want to delete this model? This action cannot be undone."
         confirmLabel="Delete"
         destructive
       />
