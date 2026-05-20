@@ -8,7 +8,7 @@ export default function BookingTimeline({ steps }: { steps: ApprovalStep[] }) {
         <div key={i} className="flex gap-4">
           <div className="flex flex-col items-center">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 ${
-              step.status === "done" ? "bg-black border-black" :
+              step.status === "done" ? "bg-primary border-tertiary" :
               step.status === "current" ? "bg-white border-tertiary" :
               step.status === "rejected" ? "bg-red-500 border-red-500" :
               "bg-white border-gray-200"
@@ -19,7 +19,7 @@ export default function BookingTimeline({ steps }: { steps: ApprovalStep[] }) {
               {step.status === "pending" && <span className="w-2 h-2 rounded-full bg-gray-300" />}
             </div>
             {i < steps.length - 1 && (
-              <div className={`w-0.5 h-8 ${step.status === "done" ? "bg-black" : "bg-gray-200"}`} />
+              <div className={`w-0.5 h-8 ${step.status === "done" ? "bg-primary" : "bg-gray-200"}`} />
             )}
           </div>
           <div className="pb-6">

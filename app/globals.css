@@ -1,18 +1,20 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #000000;
-  --color-secondary: #5F5F5F;
-  --color-tertiary: #0064FF;
-  --color-neutral: #F2EFE8;
-  --color-surface: #FFFFFF;
+  --color-primary:       #000000;
+  --color-secondary:     #6B6B6B;
+  --color-tertiary:      #C8102E;
+  --color-neutral:       #F5F5F5;
+  --color-surface:       #FFFFFF;
+  --color-tertiary-dark: #A00D23;
+  --color-tertiary-tint: #FEF0F2;
 
   --font-sans: var(--font-ibm-plex-sans), 'IBM Plex Sans', sans-serif;
   --font-thai: var(--font-ibm-plex-thai), 'IBM Plex Sans Thai Looped', sans-serif;
 }
 
 :root {
-  --background: #F2EFE8;
+  --background: #F5F5F5;
   --foreground: #000000;
 }
 
@@ -20,6 +22,11 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+}
+
+*:focus-visible {
+  outline: 2px solid #C8102E;
+  outline-offset: 2px;
 }
 
 .font-thai {

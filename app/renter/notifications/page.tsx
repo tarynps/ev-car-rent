@@ -3,14 +3,13 @@
 import { useState } from "react";
 import { CheckCircle, XCircle, Clock, RefreshCw, FileText, AlertTriangle, Bell } from "lucide-react";
 import { notifications as initialNotifications } from "@/lib/mock-data";
-import { formatDate } from "@/lib/utils";
 import type { AppNotification } from "@/lib/types";
 
 const iconMap = {
   approval: <CheckCircle size={16} className="text-green-500 shrink-0" />,
   rejection: <XCircle size={16} className="text-red-500 shrink-0" />,
   reminder: <Clock size={16} className="text-orange-400 shrink-0" />,
-  invoice: <FileText size={16} className="text-blue-500 shrink-0" />,
+  invoice: <FileText size={16} className="text-tertiary shrink-0" />,
   contract: <AlertTriangle size={16} className="text-yellow-500 shrink-0" />,
   conversion: <RefreshCw size={16} className="text-tertiary shrink-0" />,
 };

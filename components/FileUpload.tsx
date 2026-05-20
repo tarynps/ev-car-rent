@@ -36,7 +36,7 @@ export default function FileUpload({ label = "Upload file", accept = "image/*,.p
         onDragLeave={() => setDragging(false)}
         onDrop={(e) => { e.preventDefault(); setDragging(false); handleFiles(e.dataTransfer.files); }}
         onClick={() => inputRef.current?.click()}
-        className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center gap-2 cursor-pointer transition-colors ${dragging ? "border-tertiary bg-blue-50" : "border-gray-200 hover:border-gray-400 bg-gray-50"}`}
+        className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center gap-2 cursor-pointer transition-colors ${dragging ? "border-tertiary bg-gray-50" : "border-gray-200 hover:border-gray-400 bg-gray-50"}`}
       >
         <Upload size={20} className="text-secondary" />
         <p className="text-sm text-secondary text-center">

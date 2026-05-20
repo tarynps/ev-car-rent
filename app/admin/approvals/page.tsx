@@ -47,7 +47,7 @@ export default function ApprovalsPage() {
 
       {queue.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-100 p-12 shadow-sm text-center">
-          <CheckCircle size={32} className="text-green-400 mx-auto mb-3" />
+          <CheckCircle size={32} className="text-secondary mx-auto mb-3" />
           <p className="text-primary font-medium">All caught up!</p>
           <p className="text-sm text-secondary mt-1">No pending approval requests.</p>
         </div>
@@ -71,12 +71,12 @@ export default function ApprovalsPage() {
                     <p className="text-xs text-secondary">{b.brandName} {b.modelName} · {formatDate(b.pickupDate)} → {formatDate(b.returnDate)}</p>
                     <p className="text-xs text-secondary">Submitted by {b.renterName} · {formatDate(b.createdAt)}</p>
                     {currentStep && (
-                      <p className="text-xs text-orange-500 mt-1">Awaiting: {currentStep.step}</p>
+                      <p className="text-xs text-tertiary mt-1">Awaiting: {currentStep.step}</p>
                     )}
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <button onClick={() => approve(b.id)}
-                      className="flex items-center gap-1.5 bg-black text-white text-xs px-3 py-1.5 rounded-lg hover:bg-gray-800">
+                      className="flex items-center gap-1.5 bg-tertiary text-white text-xs px-3 py-1.5 rounded-lg hover:bg-tertiary-dark">
                       <CheckCircle size={12} /> Approve
                     </button>
                     <button onClick={() => setRejectModal({ open: true, bookingId: b.id })}
@@ -94,7 +94,7 @@ export default function ApprovalsPage() {
                     <div className="flex flex-col gap-1">
                       {b.approvalSteps.map((step, i) => (
                         <div key={i} className="flex items-center gap-2 text-sm">
-                          <div className={`w-2 h-2 rounded-full shrink-0 ${step.status === "done" ? "bg-black" : step.status === "current" ? "bg-tertiary" : "bg-gray-200"}`} />
+                          <div className={`w-2 h-2 rounded-full shrink-0 ${step.status === "done" ? "bg-primary" : step.status === "current" ? "bg-tertiary" : "bg-gray-200"}`} />
                           <span className={step.status === "pending" ? "text-gray-400" : "text-primary"}>{step.step}</span>
                           {step.actorName && <span className="text-xs text-secondary">— {step.actorName}</span>}
                           {step.timestamp && <span className="text-xs text-gray-400">{step.timestamp}</span>}

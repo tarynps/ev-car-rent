@@ -75,7 +75,7 @@ export default function CompanyDetailPage() {
           </div>
           <div className="mt-3">
             <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div className="h-2 bg-black rounded-full" style={{ width: `${(company.activeRentals / company.maxActiveRentals) * 100}%` }} />
+              <div className="h-2 bg-tertiary rounded-full" style={{ width: `${(company.activeRentals / company.maxActiveRentals) * 100}%` }} />
             </div>
           </div>
         </div>
@@ -188,7 +188,7 @@ export default function CompanyDetailPage() {
           </div>
           <div className="flex gap-2 justify-end">
             <button onClick={() => setAddUserOpen(false)} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
-            <button onClick={addUser} className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800">Add User</button>
+            <button onClick={addUser} className="px-4 py-2 text-sm bg-tertiary text-white rounded-lg hover:bg-tertiary-dark">Add User</button>
           </div>
         </div>
       </Modal>

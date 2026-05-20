@@ -64,7 +64,7 @@ export default function RentToSellRenterPage() {
           <span className="font-semibold">{formatBaht(entry.totalPaid)}</span>
         </div>
         <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-2">
-          <div className="h-3 bg-black rounded-full transition-all" style={{ width: `${progress}%` }} />
+          <div className="h-3 bg-tertiary rounded-full transition-all" style={{ width: `${progress}%` }} />
         </div>
         <div className="flex justify-between text-xs text-secondary">
           <span>{progress.toFixed(1)}% complete</span>
@@ -94,7 +94,7 @@ export default function RentToSellRenterPage() {
           <Download size={14} /> Download Sale Agreement
         </button>
         {!confirmed && entry.conversionStatus === "Eligible" && (
-          <button onClick={() => setConfirmOpen(true)} className="bg-black text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors">
+          <button onClick={() => setConfirmOpen(true)} className="bg-tertiary text-white text-sm px-4 py-2 rounded-lg hover:bg-tertiary-dark transition-colors">
             Confirm Intent to Purchase
           </button>
         )}

@@ -22,7 +22,7 @@ export default function RenterBookingsPage() {
           <h1 className="text-xl font-semibold text-primary">My Bookings</h1>
           <p className="text-sm text-secondary mt-0.5">{myBookings.length} total bookings</p>
         </div>
-        <Link href="/renter/bookings/new" className="flex items-center gap-2 bg-black text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors">
+        <Link href="/renter/bookings/new" className="flex items-center gap-2 bg-tertiary text-white text-sm px-4 py-2 rounded-lg hover:bg-tertiary-dark transition-colors">
           <Plus size={15} /> New Booking
         </Link>
       </div>
@@ -33,7 +33,7 @@ export default function RenterBookingsPage() {
           const count = tab === "All" ? myBookings.length : myBookings.filter((b) => b.status === tab).length;
           return (
             <button key={tab} onClick={() => setActiveTab(tab)}
-              className={`flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg font-medium transition-colors whitespace-nowrap ${activeTab === tab ? "bg-black text-white" : "text-secondary hover:text-primary"}`}>
+              className={`flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg font-medium transition-colors whitespace-nowrap ${activeTab === tab ? "bg-tertiary text-white" : "text-secondary hover:text-primary"}`}>
               {tab}
               <span className={`text-xs rounded-full px-1.5 ${activeTab === tab ? "bg-white/20" : "bg-gray-100 text-secondary"}`}>{count}</span>
             </button>

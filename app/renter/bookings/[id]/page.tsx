@@ -95,7 +95,7 @@ export default function RenterBookingDetailPage() {
             )}
             {isRentToSell && (
               <Link href={`/renter/bookings/${booking.id}/rent-to-sell`}
-                className="flex items-center gap-1.5 bg-black text-white text-sm px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors">
+                className="flex items-center gap-1.5 bg-tertiary text-white text-sm px-3 py-2 rounded-lg hover:bg-tertiary-dark transition-colors">
                 View Rent-to-Sell Terms
               </Link>
             )}
@@ -165,7 +165,7 @@ export default function RenterBookingDetailPage() {
               setBooking((prev) => prev ? { ...prev, extensionRequest: { newReturnDate, submittedAt: "2026-05-15 15:00", status: "Pending" } } : prev);
               setExtensionOpen(false);
               toast("success", "Extension request submitted for approval.");
-            }} className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800">
+            }} className="px-4 py-2 text-sm bg-tertiary text-white rounded-lg hover:bg-tertiary-dark">
               Submit Request
             </button>
           </div>
@@ -188,7 +188,7 @@ export default function RenterBookingDetailPage() {
           <div className="flex gap-2 justify-end">
             <button onClick={() => setDamageOpen(false)} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
             <button onClick={() => { setDamageOpen(false); toast("success", "Issue reported. Our team will contact you shortly."); }}
-              className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800">Submit Report</button>
+              className="px-4 py-2 text-sm bg-tertiary text-white rounded-lg hover:bg-tertiary-dark">Submit Report</button>
           </div>
         </div>
       </Modal>

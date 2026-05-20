@@ -122,7 +122,7 @@ export default function BookingDetailPage() {
               <p className="text-sm text-secondary">New return date: <span className="font-medium text-primary">{formatDate(booking.extensionRequest.newReturnDate)}</span></p>
               <p className="text-xs text-gray-400 mt-0.5">Submitted {booking.extensionRequest.submittedAt}</p>
               <div className="flex gap-2 mt-3">
-                <button onClick={() => handleExtension("approve")} className="flex items-center gap-1.5 bg-black text-white text-sm px-3 py-1.5 rounded-lg hover:bg-gray-800">
+                <button onClick={() => handleExtension("approve")} className="flex items-center gap-1.5 bg-tertiary text-white text-sm px-3 py-1.5 rounded-lg hover:bg-tertiary-dark">
                   <CheckCircle size={13} /> Approve Extension
                 </button>
                 <button onClick={() => handleExtension("reject")} className="flex items-center gap-1.5 border border-gray-200 text-sm px-3 py-1.5 rounded-lg hover:bg-gray-50">
@@ -176,7 +176,7 @@ export default function BookingDetailPage() {
           <p className="text-sm text-secondary">Select a replacement vehicle.</p>
           {availableCars.slice(0, 5).map((c) => (
             <button key={c.id} onClick={() => { setBooking((b) => b ? { ...b, carId: c.id, licensePlate: c.licensePlate } : b); setSwapOpen(false); }}
-              className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3 hover:border-black transition-colors text-left">
+              className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3 hover:border-tertiary transition-colors text-left">
               <div>
                 <p className="text-sm font-medium">{c.licensePlate}</p>
                 <p className="text-xs text-secondary">{c.brandName} {c.modelName}</p>

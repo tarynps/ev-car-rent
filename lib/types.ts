@@ -19,6 +19,7 @@ export interface CarModel {
   brandId: string;
   brandName: string;
   name: string;
+  bodyType?: string;
   year: number;
   batteryKwh: number;
   rangeWltp: number;
@@ -37,6 +38,7 @@ export interface Car {
   modelId: string;
   brandName: string;
   modelName: string;
+  bodyType?: string;
   year: number;
   color: string;
   status: CarStatus;
@@ -230,12 +232,49 @@ export interface RentToSellEntry {
   licensePlate: string;
   modelName: string;
   brandName: string;
+  companyId: string;
   companyName: string;
   contractStart: string;
   totalPaid: number;
   buyoutAmount: number;
   conversionStatus: ConversionStatus;
   bookingId: string;
+}
+
+export interface ContractLine {
+  modelId: string;
+  modelName: string;
+  bodyType?: string;
+  brandName: string;
+  assignedCars: { carId: string; licensePlate: string }[];
+  baseRate: number;
+}
+
+export interface Contract {
+  id: string;
+  companyId: string;
+  companyName: string;
+  contactName: string;
+  contactPhone: string;
+  contactEmail: string;
+  contractType: ContractType;
+  durationType: DurationType;
+  startDate: string;
+  endDate: string;
+  pickupLocationId: string;
+  pickupLocationName: string;
+  returnLocationId: string;
+  returnLocationName: string;
+  lines: ContractLine[];
+  addOns: AddOn;
+  deposit: number;
+  vat: number;
+  total: number;
+  status: BookingStatus;
+  approvalSteps: ApprovalStep[];
+  createdAt: string;
+  extensionRequest?: ExtensionRequest;
+  cancellationReason?: string;
 }
 
 export interface AppNotification {
@@ -254,4 +293,27 @@ export interface AdminUser {
   email: string;
   role: "Super Admin" | "Manager";
   createdAt: string;
+}
+
+export interface RequestedModel {
+  modelName: string;
+  bodyType?: string;
+  qty: number;
+}
+
+export interface RentRequest {
+  id: string;
+  companyName: string;
+  contactName: string;
+  contactPhone: string;
+  contactEmail: string;
+  requestedModels: RequestedModel[];
+  startDate: string;
+  endDate: string;
+  contractType: "Rent-and-Return" | "Rent-to-Sell";
+  durationType: "Daily" | "Weekly" | "Monthly" | "Yearly";
+  notes?: string;
+  status: "Pending" | "Approved" | "Rejected";
+  createdAt: string;
+  approvalSteps: ApprovalStep[];
 }

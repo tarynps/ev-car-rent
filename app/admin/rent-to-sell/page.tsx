@@ -51,7 +51,7 @@ export default function RentToSellPage() {
                       <span>Buyout: {formatBaht(entry.buyoutAmount)}</span>
                     </div>
                     <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-2 bg-black rounded-full transition-all" style={{ width: `${progress}%` }} />
+                      <div className="h-2 bg-tertiary rounded-full transition-all" style={{ width: `${progress}%` }} />
                     </div>
                     <p className="text-xs text-secondary mt-1">
                       {formatBaht(entry.buyoutAmount - entry.totalPaid)} remaining · {progress.toFixed(1)}% complete
@@ -65,7 +65,7 @@ export default function RentToSellPage() {
                   </button>
                   {entry.conversionStatus !== "Completed" && (
                     <button onClick={() => setConfirmConversion({ open: true, carId: entry.carId })}
-                      className="flex items-center gap-1.5 bg-black text-white text-xs px-3 py-1.5 rounded-lg hover:bg-gray-800 transition-colors">
+                      className="flex items-center gap-1.5 bg-tertiary text-white text-xs px-3 py-1.5 rounded-lg hover:bg-tertiary-dark transition-colors">
                       Confirm Conversion
                     </button>
                   )}
@@ -87,7 +87,7 @@ export default function RentToSellPage() {
             <div className="flex gap-2">
               {[{ v: "time", l: "Time-based" }, { v: "amount", l: "Amount-based" }].map(({ v, l }) => (
                 <button key={v} onClick={() => setTriggerForm({ ...triggerForm, type: v })}
-                  className={`px-4 py-2 text-sm rounded-lg border transition-colors ${triggerForm.type === v ? "bg-black text-white border-black" : "border-gray-200 text-secondary"}`}>
+                  className={`px-4 py-2 text-sm rounded-lg border transition-colors ${triggerForm.type === v ? "bg-tertiary text-white border-tertiary" : "border-gray-200 text-secondary"}`}>
                   {l}
                 </button>
               ))}
@@ -103,7 +103,7 @@ export default function RentToSellPage() {
           <div className="flex gap-2 justify-end">
             <button onClick={() => setTriggerModal({ open: false, carId: "" })} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
             <button onClick={() => { setTriggerModal({ open: false, carId: "" }); toast("success", "Conversion trigger saved."); }}
-              className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800">Save Trigger</button>
+              className="px-4 py-2 text-sm bg-tertiary text-white rounded-lg hover:bg-tertiary-dark">Save Trigger</button>
           </div>
         </div>
       </Modal>

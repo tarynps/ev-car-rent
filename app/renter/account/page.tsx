@@ -60,7 +60,7 @@ export default function RenterAccountPage() {
               <input value={company.billingEmail} onChange={(e) => setCompany({ ...company, billingEmail: e.target.value })}
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm" type="email" />
             </div>
-            <button onClick={saveProfile} className="flex items-center gap-2 bg-black text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors w-fit">
+            <button onClick={saveProfile} className="flex items-center gap-2 bg-tertiary text-white text-sm px-4 py-2 rounded-lg hover:bg-tertiary-dark transition-colors w-fit">
               <Save size={14} /> Save Changes
             </button>
           </div>
@@ -157,7 +157,7 @@ export default function RenterAccountPage() {
           </div>
           <div className="flex gap-2 justify-end">
             <button onClick={() => setAddUserOpen(false)} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
-            <button onClick={addUser} className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800">Add</button>
+            <button onClick={addUser} className="px-4 py-2 text-sm bg-tertiary text-white rounded-lg hover:bg-tertiary-dark">Add</button>
           </div>
         </div>
       </Modal>

@@ -67,7 +67,7 @@ export default function FinancePage() {
       <div className="flex gap-1 bg-white border border-gray-100 rounded-xl p-1 shadow-sm w-fit">
         {tabs.map((tab) => (
           <button key={tab} onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 text-sm rounded-lg font-medium transition-colors ${activeTab === tab ? "bg-black text-white" : "text-secondary hover:text-primary"}`}>
+            className={`px-4 py-2 text-sm rounded-lg font-medium transition-colors ${activeTab === tab ? "bg-tertiary text-white" : "text-secondary hover:text-primary"}`}>
             {tab}
           </button>
         ))}
@@ -87,7 +87,7 @@ export default function FinancePage() {
             </div>
             <div className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
               <p className="text-xs text-secondary uppercase tracking-wide">Net Profit</p>
-              <p className="text-2xl font-semibold text-green-600 mt-1">{formatBaht(totalRevenue - totalExpenses)}</p>
+              <p className="text-2xl font-semibold text-tertiary mt-1">{formatBaht(totalRevenue - totalExpenses)}</p>
             </div>
           </div>
           <DataTable columns={txColumns as Parameters<typeof DataTable>[0]["columns"]} data={transactions as unknown as Record<string, unknown>[]} />
@@ -166,18 +166,18 @@ export default function FinancePage() {
                   <tr key={row.car} className="border-b border-gray-50">
                     <td className="px-4 py-3 font-mono text-xs">{row.car}</td>
                     <td className="px-4 py-3">{row.model}</td>
-                    <td className="px-4 py-3 text-green-600">{formatBaht(row.rev)}</td>
+                    <td className="px-4 py-3 text-primary">{formatBaht(row.rev)}</td>
                     <td className="px-4 py-3 text-red-500">{formatBaht(row.exp)}</td>
-                    <td className={`px-4 py-3 font-semibold ${row.net >= 0 ? "text-green-600" : "text-red-500"}`}>{formatBaht(row.net)}</td>
+                    <td className={`px-4 py-3 font-semibold ${row.net >= 0 ? "text-tertiary" : "text-red-500"}`}>{formatBaht(row.net)}</td>
                   </tr>
                 ))}
               </tbody>
               <tfoot className="border-t border-gray-200 bg-gray-50">
                 <tr>
                   <td colSpan={2} className="px-4 py-3 font-semibold text-xs">Fleet Total</td>
-                  <td className="px-4 py-3 font-semibold text-green-600">{formatBaht(carPnl.reduce((s, r) => s + r.rev, 0))}</td>
+                  <td className="px-4 py-3 font-semibold text-primary">{formatBaht(carPnl.reduce((s, r) => s + r.rev, 0))}</td>
                   <td className="px-4 py-3 font-semibold text-red-500">{formatBaht(carPnl.reduce((s, r) => s + r.exp, 0))}</td>
-                  <td className="px-4 py-3 font-semibold text-green-600">{formatBaht(carPnl.reduce((s, r) => s + r.net, 0))}</td>
+                  <td className="px-4 py-3 font-semibold text-tertiary">{formatBaht(carPnl.reduce((s, r) => s + r.net, 0))}</td>
                 </tr>
               </tfoot>
             </table>
