@@ -12,14 +12,14 @@ import { notifications } from "@/lib/mock-data";
 
 const adminNav = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/fleet", label: "Fleet", icon: Car },
+  { href: "/admin/fleet", label: "Inventory Management", icon: Car },
   { href: "/admin/models", label: "Models", icon: Database },
   { href: "/admin/contracts", label: "Contracts", icon: CalendarCheck },
   { href: "/admin/requests", label: "Requests", icon: CheckSquare },
   { href: "/admin/pricing", label: "Pricing", icon: DollarSign },
   { href: "/admin/finance", label: "Finance", icon: BarChart2 },
   { href: "/admin/rent-to-sell", label: "Rent-to-Sell", icon: RefreshCw },
-  { href: "/admin/companies", label: "Companies", icon: Building },
+  { href: "/admin/companies", label: "Clients", icon: Building },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

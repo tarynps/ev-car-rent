@@ -69,7 +69,7 @@ export default function FleetPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-primary">Fleet Management</h1>
+          <h1 className="text-xl font-semibold text-primary">Inventory Management</h1>
           <p className="text-sm text-secondary mt-0.5">{cars.length} vehicles registered</p>
         </div>
         <button onClick={() => setAddOpen(true)} className="flex items-center gap-2 bg-tertiary text-white text-sm px-4 py-2 rounded-lg hover:bg-tertiary-dark transition-colors">
