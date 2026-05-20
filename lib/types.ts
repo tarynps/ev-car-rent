@@ -295,6 +295,57 @@ export interface AdminUser {
   createdAt: string;
 }
 
+export interface TelematicsVehicle {
+  carId: string;
+  licensePlate: string;
+  modelName: string;
+  brandName: string;
+  companyId: string;
+  lat: number;
+  lng: number;
+  speed: number;
+  batteryPct: number;
+  isCharging: boolean;
+  ignitionOn: boolean;
+  odometer: number;
+  lastUpdated: string;
+}
+
+export interface TripRecord {
+  id: string;
+  carId: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  startLocation: string;
+  endLocation: string;
+  distanceKm: number;
+  durationMin: number;
+}
+
+export type BehaviorEventType = "Hard Braking" | "Rapid Acceleration" | "Speeding" | "Idle";
+
+export interface BehaviorEvent {
+  id: string;
+  carId: string;
+  timestamp: string;
+  type: BehaviorEventType;
+  location: string;
+  severity: "Low" | "Medium" | "High";
+}
+
+export interface PurchaseOffer {
+  contractId: string;
+  carId: string;
+  licensePlate: string;
+  modelName: string;
+  buyoutAmount: number;
+  totalPaid: number;
+  totalBuyout: number;
+  offerExpiry: string;
+  status: "Available" | "Accepted" | "Expired";
+}
+
 export interface RequestedModel {
   modelName: string;
   bodyType?: string;

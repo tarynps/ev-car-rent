@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Car, Database, CalendarCheck, CheckSquare,
   DollarSign, BarChart2, RefreshCw, Building, Settings,
-  User, Search, BookOpen, CreditCard, Bell, Menu, X, Zap,
+  User, Search, BookOpen, CreditCard, Bell, Menu, X, Zap, Radio,
 } from "lucide-react";
 import { useState } from "react";
 import { notifications } from "@/lib/mock-data";
@@ -26,7 +26,8 @@ const adminNav = [
 const renterNav = [
   { href: "/renter/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/renter/vehicles", label: "Vehicle Catalog", icon: Search },
-  { href: "/renter/bookings", label: "My Fleet", icon: BookOpen },
+  { href: "/renter/fleet", label: "My Fleet", icon: BookOpen },
+  { href: "/renter/telematics", label: "Telematics", icon: Radio },
   { href: "/renter/billing", label: "Billing", icon: CreditCard },
   { href: "/renter/account", label: "Account", icon: User },
   { href: "/renter/notifications", label: "Notifications", icon: Bell },

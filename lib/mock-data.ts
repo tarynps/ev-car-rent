@@ -1,7 +1,7 @@
 import type {
   Brand, CarModel, Car, Company, Booking, Contract, PricingTier, Transaction,
   ChargingCost, Invoice, RentToSellEntry, AppNotification, AdminUser,
-  Location, ConnectorType, RentRequest,
+  Location, ConnectorType, RentRequest, TelematicsVehicle, TripRecord, BehaviorEvent, PurchaseOffer,
 } from "./types";
 
 // ─── Brands ───────────────────────────────────────────────────────────────────
@@ -913,4 +913,49 @@ export const monthlyChartData = [
   { month: "Mar 26", income: 650475, expense: 130000 },
   { month: "Apr 26", income: 162225, expense: 88000 },
   { month: "May 26", income: 290000, expense: 115000 },
+];
+
+// ─── Telematics ───────────────────────────────────────────────────────────────
+export const telematicsVehicles: TelematicsVehicle[] = [
+  { carId: "car1",  licensePlate: "กก 1234 กทม", modelName: "N55 EV",        brandName: "JAC", companyId: "c1", lat: 13.756, lng: 100.502, speed: 42,  batteryPct: 78, isCharging: false, ignitionOn: true,  odometer: 18420, lastUpdated: "2026-05-20 14:32" },
+  { carId: "car5",  licensePlate: "จจ 7890 กทม", modelName: "N-Series",       brandName: "JAC", companyId: "c1", lat: 13.742, lng: 100.535, speed: 0,   batteryPct: 32, isCharging: true,  ignitionOn: false, odometer: 22310, lastUpdated: "2026-05-20 14:30" },
+  { carId: "car3",  licensePlate: "คค 9012 กทม", modelName: "T9 EV",          brandName: "JAC", companyId: "c2", lat: 13.770, lng: 100.513, speed: 61,  batteryPct: 55, isCharging: false, ignitionOn: true,  odometer: 9870,  lastUpdated: "2026-05-20 14:33" },
+  { carId: "car9",  licensePlate: "ญญ 3456 กทม", modelName: "Sunray EV",      brandName: "JAC", companyId: "c3", lat: 13.730, lng: 100.748, speed: 0,   batteryPct: 91, isCharging: false, ignitionOn: false, odometer: 6540,  lastUpdated: "2026-05-20 13:55" },
+  { carId: "car11", licensePlate: "ฎฎ 5678 กทม", modelName: "N-Series",       brandName: "JAC", companyId: "c1", lat: 13.762, lng: 100.488, speed: 28,  batteryPct: 64, isCharging: false, ignitionOn: true,  odometer: 31200, lastUpdated: "2026-05-20 14:31" },
+];
+
+export const tripRecords: TripRecord[] = [
+  { id: "tr1", carId: "car1",  date: "2026-05-20", startTime: "08:15", endTime: "09:42", startLocation: "Sukhumvit Depot",   endLocation: "Ladkrabang Industrial",  distanceKm: 32.4, durationMin: 87 },
+  { id: "tr2", carId: "car1",  date: "2026-05-19", startTime: "07:50", endTime: "09:10", startLocation: "Sukhumvit Depot",   endLocation: "Bang Na Terminal",       distanceKm: 28.1, durationMin: 80 },
+  { id: "tr3", carId: "car1",  date: "2026-05-18", startTime: "08:05", endTime: "10:30", startLocation: "Bang Na Terminal",  endLocation: "Don Mueang Logistics",   distanceKm: 45.7, durationMin: 145 },
+  { id: "tr4", carId: "car5",  date: "2026-05-20", startTime: "06:30", endTime: "08:00", startLocation: "Silom Office Hub",  endLocation: "Suvarnabhumi Cargo",     distanceKm: 38.2, durationMin: 90 },
+  { id: "tr5", carId: "car5",  date: "2026-05-19", startTime: "07:00", endTime: "08:45", startLocation: "Suvarnabhumi Cargo","endLocation": "Silom Office Hub",     distanceKm: 37.9, durationMin: 105 },
+  { id: "tr6", carId: "car11", date: "2026-05-20", startTime: "09:00", endTime: "10:15", startLocation: "Sukhumvit Depot",   endLocation: "Chatuchak Market",       distanceKm: 18.6, durationMin: 75 },
+];
+
+export const behaviorEvents: BehaviorEvent[] = [
+  { id: "be1",  carId: "car1",  timestamp: "2026-05-20 08:32", type: "Hard Braking",       location: "Sukhumvit Rd, km 18",   severity: "Medium" },
+  { id: "be2",  carId: "car1",  timestamp: "2026-05-20 09:05", type: "Speeding",            location: "Chalerm Maha Nakhon",   severity: "High" },
+  { id: "be3",  carId: "car1",  timestamp: "2026-05-19 08:15", type: "Rapid Acceleration",  location: "Rama IV Rd",            severity: "Low" },
+  { id: "be4",  carId: "car1",  timestamp: "2026-05-19 08:50", type: "Idle",                location: "Bang Na Terminal",      severity: "Low" },
+  { id: "be5",  carId: "car5",  timestamp: "2026-05-20 06:45", type: "Hard Braking",        location: "Lat Krabang Rd",        severity: "High" },
+  { id: "be6",  carId: "car5",  timestamp: "2026-05-20 07:20", type: "Speeding",            location: "Bangna-Trad Hwy",       severity: "Medium" },
+  { id: "be7",  carId: "car5",  timestamp: "2026-05-19 07:30", type: "Idle",                location: "Suvarnabhumi Cargo",    severity: "Low" },
+  { id: "be8",  carId: "car11", timestamp: "2026-05-20 09:18", type: "Rapid Acceleration",  location: "Phahon Yothin Rd",      severity: "Medium" },
+  { id: "be9",  carId: "car11", timestamp: "2026-05-20 09:40", type: "Hard Braking",        location: "Chatuchak Area",        severity: "Low" },
+  { id: "be10", carId: "car3",  timestamp: "2026-05-20 11:00", type: "Speeding",            location: "Vibhavadi Rangsit",     severity: "High" },
+];
+
+export const purchaseOffers: PurchaseOffer[] = [
+  {
+    contractId: "ct1",
+    carId: "car1",
+    licensePlate: "กก 1234 กทม",
+    modelName: "N55 EV",
+    buyoutAmount: 280000,
+    totalPaid: 420000,
+    totalBuyout: 560000,
+    offerExpiry: "2026-06-30",
+    status: "Available",
+  },
 ];
