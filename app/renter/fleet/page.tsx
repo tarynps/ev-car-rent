@@ -8,7 +8,7 @@ import { contracts, purchaseOffers } from "@/lib/mock-data";
 import { formatDate, formatBaht } from "@/lib/utils";
 import type { Contract } from "@/lib/types";
 
-type StatusFilter = "All" | Contract["status"];
+type StatusFilter = "All" | "Pending" | "Active" | "Confirmed" | "Expired" | "Terminated";
 const STATUS_TABS: StatusFilter[] = ["All", "Pending", "Active", "Confirmed", "Expired", "Terminated"];
 
 export default function RenterFleetPage() {
