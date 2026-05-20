@@ -2,11 +2,16 @@
 
 import { use, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Download, Phone, Mail, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft, Download, Phone, CheckCircle, XCircle, Clock, AlertTriangle, Radio, ChevronRight } from "lucide-react";
 import StatusBadge from "@/components/StatusBadge";
 import Modal from "@/components/Modal";
-import { contracts, purchaseOffers } from "@/lib/mock-data";
+import { contracts, purchaseOffers, carModels } from "@/lib/mock-data";
 import { formatDate, formatBaht } from "@/lib/utils";
+
+function getModelPhoto(modelId: string): string | null {
+  return carModels.find((m) => m.id === modelId)?.photos[0] ?? null;
+}
 
 export default function FleetDetailPage({ params }: { params: Promise<{ contractId: string }> }) {
   const { contractId } = use(params);
@@ -99,28 +104,45 @@ export default function FleetDetailPage({ params }: { params: Promise<{ contract
           <p className="text-xs text-secondary mt-0.5">{contract.lines.length} model type{contract.lines.length > 1 ? "s" : ""} · {totalVehicles} vehicle{totalVehicles > 1 ? "s" : ""}</p>
         </div>
         <div className="divide-y divide-gray-50">
-          {contract.lines.map((line, i) => (
-            <div key={i} className="px-5 py-4">
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <p className="font-medium text-primary">{line.modelName}{line.bodyType ? ` (${line.bodyType})` : ""}</p>
-                  <p className="text-xs text-secondary">{line.assignedCars.length} unit{line.assignedCars.length > 1 ? "s" : ""} · {formatBaht(line.baseRate)}/mo per unit</p>
+          {contract.lines.map((line, i) => {
+            const photo = getModelPhoto(line.modelId);
+            return (
+              <div key={i} className="px-5 py-4">
+                {/* Line header */}
+                <div className="flex items-center gap-3 mb-3">
+                  {photo && (
+                    <div className="relative w-16 h-11 rounded-lg bg-gray-50 border border-gray-100 overflow-hidden shrink-0">
+                      <Image src={photo} alt={line.modelName} fill className="object-contain p-1" unoptimized />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-primary">{line.modelName}{line.bodyType ? ` (${line.bodyType})` : ""}</p>
+                    <p className="text-xs text-secondary">{line.assignedCars.length} unit{line.assignedCars.length > 1 ? "s" : ""} · {formatBaht(line.baseRate)}/mo per unit</p>
+                  </div>
+                  <button
+                    onClick={() => { setSelectedCarId(line.assignedCars[0]?.carId ?? ""); setDamageModal(true); }}
+                    className="flex items-center gap-1 text-xs text-red-500 border border-red-200 px-2.5 py-1 rounded-lg hover:bg-red-50 shrink-0">
+                    <AlertTriangle size={11} /> Report Issue
+                  </button>
                 </div>
-                <button
-                  onClick={() => { setSelectedCarId(line.assignedCars[0]?.carId ?? ""); setDamageModal(true); }}
-                  className="flex items-center gap-1 text-xs text-red-500 border border-red-200 px-2.5 py-1 rounded-lg hover:bg-red-50">
-                  <AlertTriangle size={11} /> Report Issue
-                </button>
+                {/* Per-car rows */}
+                <div className="flex flex-col gap-1.5 pl-1">
+                  {line.assignedCars.map((car) => (
+                    <Link
+                      key={car.carId}
+                      href={`/renter/telematics/${car.carId}`}
+                      className="flex items-center gap-3 px-3 py-2 rounded-lg border border-gray-100 bg-gray-50 hover:border-tertiary hover:bg-tertiary-tint transition-all group"
+                    >
+                      <Radio size={13} className="text-secondary group-hover:text-tertiary shrink-0" />
+                      <span className="font-mono text-xs font-semibold text-primary flex-1">{car.licensePlate}</span>
+                      <span className="text-xs text-secondary group-hover:text-tertiary">View Telematics</span>
+                      <ChevronRight size={13} className="text-secondary group-hover:text-tertiary" />
+                    </Link>
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {line.assignedCars.map((car) => (
-                  <span key={car.carId} className="font-mono text-xs border border-gray-200 bg-gray-50 px-2 py-0.5 rounded">
-                    {car.licensePlate}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
