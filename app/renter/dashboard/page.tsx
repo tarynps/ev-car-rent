@@ -350,132 +350,6 @@ export default function RenterDashboard() {
         </div>
       </section>
 
-      {/* Telematics Overview (original) */}
-      <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-secondary">Telematics Overview</h2>
-          <span className="text-xs text-secondary">Fleet-wide live snapshot</span>
-        </div>
-
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-          <div className="xl:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-semibold text-primary">Fleet Live Map</h3>
-                <p className="text-xs text-secondary mt-0.5">Active rented vehicles plotted by last GPS ping.</p>
-              </div>
-              <Radio size={16} className="text-tertiary" />
-            </div>
-            <div className="relative h-72 bg-[linear-gradient(135deg,#f8f8f8_0%,#f8f8f8_49%,#eeeeee_49%,#eeeeee_51%,#f8f8f8_51%)]">
-              <div className="absolute inset-0 opacity-60">
-                <div className="absolute left-8 right-8 top-1/3 h-px bg-gray-300" />
-                <div className="absolute left-12 right-16 top-2/3 h-px bg-gray-300" />
-                <div className="absolute top-8 bottom-8 left-1/3 w-px bg-gray-300" />
-                <div className="absolute top-10 bottom-10 left-2/3 w-px bg-gray-300" />
-              </div>
-              {fleetTelemetry.map(({ booking, telemetry }) => (
-                <Link
-                  key={booking.id}
-                  href={`/renter/telematics/${booking.carId}`}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 group"
-                  style={{ left: `${telemetry.mapX}%`, top: `${telemetry.mapY}%` }}
-                >
-                  <span className="relative flex h-4 w-4">
-                    <span className="absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-30 group-hover:animate-ping" />
-                    <span className="relative inline-flex h-4 w-4 rounded-full bg-tertiary ring-4 ring-white shadow" />
-                  </span>
-                  <span className="absolute left-5 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-lg bg-primary px-2 py-1 text-[11px] text-white opacity-0 shadow transition-opacity group-hover:opacity-100">
-                    {booking.licensePlate} · {telemetry.gps}
-                  </span>
-                </Link>
-              ))}
-              <div className="absolute bottom-4 left-5 rounded-lg bg-white/90 border border-gray-100 px-3 py-2 shadow-sm">
-                <p className="text-xs font-medium text-primary">Bangkok service region</p>
-                <p className="text-[11px] text-secondary">Live GPS mock layer</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4">
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-primary">Battery Summary</h3>
-                <BatteryCharging size={16} className="text-tertiary" />
-              </div>
-              <p className="text-3xl font-semibold text-primary mt-4">{averageBattery}%</p>
-              <p className="text-xs text-secondary mt-1">average state of charge</p>
-              <div className="h-2 bg-gray-100 rounded-full overflow-hidden mt-4">
-                <div className="h-full bg-tertiary rounded-full" style={{ width: `${averageBattery}%` }} />
-              </div>
-              <div className="grid grid-cols-2 gap-3 mt-4">
-                <div className="rounded-lg bg-neutral p-3">
-                  <p className="text-xs text-secondary">Charging</p>
-                  <p className="text-lg font-semibold text-primary">{chargingCount}</p>
-                </div>
-                <div className="rounded-lg bg-neutral p-3">
-                  <p className="text-xs text-secondary">Not Charging</p>
-                  <p className="text-lg font-semibold text-primary">{Math.max(0, fleetTelemetry.length - chargingCount)}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-primary">Active Alerts</h3>
-                <AlertTriangle size={16} className="text-tertiary" />
-              </div>
-              <p className="text-3xl font-semibold text-primary mt-4">{alertCount}</p>
-              <p className="text-xs text-secondary mt-1">low battery, geofence, or speeding warnings</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-          {[
-            { label: "Hard Braking", value: behaviorTotals.hardBraking, suffix: "events", icon: ShieldAlert },
-            { label: "Rapid Acceleration", value: behaviorTotals.rapidAcceleration, suffix: "events", icon: Zap },
-            { label: "Speeding", value: behaviorTotals.speeding, suffix: "events", icon: Gauge },
-            { label: "Idle Time", value: behaviorTotals.idleHours.toFixed(1), suffix: "hours", icon: Timer },
-          ].map(({ label, value, suffix, icon: Icon }) => (
-            <div key={label} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-xs uppercase tracking-wide text-secondary">{label}</p>
-                <Icon size={15} className="text-tertiary" />
-              </div>
-              <p className="text-2xl font-semibold text-primary mt-3">{value}</p>
-              <p className="text-xs text-secondary mt-1">{suffix} today</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-primary">Vehicle Telemetry List</h3>
-            <Link href="/renter/fleet" className="text-xs text-tertiary hover:underline">View fleet</Link>
-          </div>
-          <div className="divide-y divide-gray-50">
-            {fleetTelemetry.map(({ booking, car, telemetry }) => (
-              <Link key={booking.id} href={`/renter/telematics/${booking.carId}`} className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr_1fr_auto] gap-3 px-5 py-3 hover:bg-gray-50/60 transition-colors">
-                <div>
-                  <p className="text-sm font-semibold text-primary">{booking.brandName} {booking.modelName}</p>
-                  <p className="text-xs text-secondary">{booking.licensePlate} · {getVehicleCategory(booking.modelId)}</p>
-                </div>
-                <div className="text-sm text-secondary flex items-center gap-1.5">
-                  <MapPin size={13} className="text-tertiary" />
-                  {telemetry.gps}
-                </div>
-                <div className="text-sm text-secondary">
-                  {telemetry.battery}% SOC · {telemetry.charging ? "Charging" : "Not charging"}
-                </div>
-                <div className="flex items-center gap-2">
-                  <StatusBadge status={car?.status === "Maintenance" ? "Maintenance" : booking.status} />
-                  <span className="text-xs text-secondary">{telemetry.speed} km/h</span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Purchase Offer Alerts */}
       <section className="flex flex-col gap-3">
@@ -571,12 +445,33 @@ export default function RenterDashboard() {
           <KpiCard label="Events Today" value={todayEvents.length} sub={`${myEvents.length} total on record`} icon={AlertTriangle} color="#f59e0b" />
         </div>
 
-        {/* Gauges */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {/* Gauges + Battery Summary */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <GaugeDonut value={safetyScore} color={safetyColor} label="Driver Safety Score"
             sub={`Based on ${myEvents.length} recorded behavior events`} />
           <GaugeDonut value={utilisationPct} color="#C8102E" label="Fleet Utilisation"
             sub={`${activeCount} of ${myVehicles.length} vehicles active now`} />
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-primary">Battery Summary</h3>
+              <BatteryCharging size={16} className="text-tertiary" />
+            </div>
+            <p className="text-3xl font-semibold text-primary mt-4">{averageBattery}%</p>
+            <p className="text-xs text-secondary mt-1">average state of charge</p>
+            <div className="h-2 bg-gray-100 rounded-full overflow-hidden mt-4">
+              <div className="h-full bg-tertiary rounded-full" style={{ width: `${averageBattery}%` }} />
+            </div>
+            <div className="grid grid-cols-2 gap-3 mt-4">
+              <div className="rounded-lg bg-neutral p-3">
+                <p className="text-xs text-secondary">Charging</p>
+                <p className="text-lg font-semibold text-primary">{chargingCount}</p>
+              </div>
+              <div className="rounded-lg bg-neutral p-3">
+                <p className="text-xs text-secondary">Not Charging</p>
+                <p className="text-lg font-semibold text-primary">{Math.max(0, fleetTelemetry.length - chargingCount)}</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Charts */}
