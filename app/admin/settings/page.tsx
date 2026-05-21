@@ -59,7 +59,7 @@ export default function SettingsPage() {
       <div className="flex gap-1 bg-white border border-gray-100 rounded-xl p-1 shadow-sm w-fit">
         {tabs.map((tab) => (
           <button key={tab} onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 text-sm rounded-lg font-medium transition-colors ${activeTab === tab ? "bg-black text-white" : "text-secondary hover:text-primary"}`}>
+            className={`px-4 py-2 text-sm rounded-lg font-medium transition-colors ${activeTab === tab ? "bg-tertiary text-white" : "text-secondary hover:text-primary"}`}>
             {tab}
           </button>
         ))}
@@ -71,7 +71,7 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
             <h3 className="text-sm font-semibold">Admin & Manager Users</h3>
             <button onClick={() => { setUserForm({ name: "", email: "", role: "Manager" }); setUserModal({ open: true }); }}
-              className="flex items-center gap-1.5 bg-black text-white text-xs px-3 py-1.5 rounded-lg hover:bg-gray-800">
+              className="flex items-center gap-1.5 bg-tertiary text-white text-xs px-3 py-1.5 rounded-lg hover:bg-tertiary-dark">
               <Plus size={12} /> Add User
             </button>
           </div>
@@ -134,7 +134,7 @@ export default function SettingsPage() {
             </tbody>
           </table>
           <div className="px-5 py-3 border-t border-gray-100">
-            <button onClick={() => toast("success", "Notification settings saved.")} className="bg-black text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-800">
+            <button onClick={() => toast("success", "Notification settings saved.")} className="bg-tertiary text-white text-sm px-4 py-2 rounded-lg hover:bg-tertiary-dark">
               Save Settings
             </button>
           </div>
@@ -147,7 +147,7 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
             <h3 className="text-sm font-semibold">Pick-up / Drop-off Locations</h3>
             <button onClick={() => { setLocationForm({ name: "", address: "" }); setLocationModal({ open: true }); }}
-              className="flex items-center gap-1.5 bg-black text-white text-xs px-3 py-1.5 rounded-lg hover:bg-gray-800">
+              className="flex items-center gap-1.5 bg-tertiary text-white text-xs px-3 py-1.5 rounded-lg hover:bg-tertiary-dark">
               <Plus size={12} /> Add Location
             </button>
           </div>
@@ -181,7 +181,7 @@ export default function SettingsPage() {
               <textarea className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm resize-none font-mono" rows={6}
                 defaultValue={`[${tmpl}]\n\nThis agreement is entered into between EV Fleet Management Co., Ltd. and the Renter as identified above...\n\n[Terms and conditions would appear here]`} />
               <div className="flex gap-2 mt-3">
-                <button onClick={() => toast("success", "Template saved.")} className="bg-black text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-800">Save Template</button>
+                <button onClick={() => toast("success", "Template saved.")} className="bg-tertiary text-white text-sm px-4 py-2 rounded-lg hover:bg-tertiary-dark">Save Template</button>
                 <button className="border border-gray-200 text-sm px-4 py-2 rounded-lg hover:bg-gray-50">Upload PDF</button>
               </div>
             </div>
@@ -212,7 +212,7 @@ export default function SettingsPage() {
           </div>
           <div className="flex gap-2 justify-end">
             <button onClick={() => setUserModal({ open: false })} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
-            <button onClick={saveUser} className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800">Save</button>
+            <button onClick={saveUser} className="px-4 py-2 text-sm bg-tertiary text-white rounded-lg hover:bg-tertiary-dark">Save</button>
           </div>
         </div>
       </Modal>
@@ -232,7 +232,7 @@ export default function SettingsPage() {
           </div>
           <div className="flex gap-2 justify-end">
             <button onClick={() => setLocationModal({ open: false })} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
-            <button onClick={saveLocation} className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800">Save</button>
+            <button onClick={saveLocation} className="px-4 py-2 text-sm bg-tertiary text-white rounded-lg hover:bg-tertiary-dark">Save</button>
           </div>
         </div>
       </Modal>

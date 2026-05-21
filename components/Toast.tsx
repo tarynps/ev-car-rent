@@ -18,10 +18,10 @@ interface ToastContextValue {
 const ToastContext = createContext<ToastContextValue>({ toast: () => {} });
 
 const icons = {
-  success: <CheckCircle size={16} className="text-green-500 shrink-0" />,
+  success: <CheckCircle size={16} className="text-tertiary shrink-0" />,
   error:   <XCircle size={16} className="text-red-500 shrink-0" />,
-  warning: <AlertTriangle size={16} className="text-yellow-500 shrink-0" />,
-  info:    <Info size={16} className="text-blue-500 shrink-0" />,
+  warning: <AlertTriangle size={16} className="text-primary shrink-0" />,
+  info:    <Info size={16} className="text-tertiary shrink-0" />,
 };
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {

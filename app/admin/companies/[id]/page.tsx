@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, UserPlus, UserMinus, FileCheck } from "lucide-react";
 import StatusBadge from "@/components/StatusBadge";
 import Modal from "@/components/Modal";
-import { companies as allCompanies, bookings } from "@/lib/mock-data";
+import { companies as allCompanies, contracts, rentRequests } from "@/lib/mock-data";
 import { formatBaht, formatDate } from "@/lib/utils";
 
 export default function CompanyDetailPage() {
@@ -17,7 +17,8 @@ export default function CompanyDetailPage() {
 
   if (!company) return <div className="text-secondary p-8">Company not found.</div>;
 
-  const companyBookings = bookings.filter((b) => b.companyId === id);
+  const companyContracts = contracts.filter((c) => c.companyId === id);
+  const companyRequests = rentRequests.filter((r) => r.companyName === company?.name);
 
   function addUser() {
     const newUser = {
@@ -75,7 +76,7 @@ export default function CompanyDetailPage() {
           </div>
           <div className="mt-3">
             <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div className="h-2 bg-black rounded-full" style={{ width: `${(company.activeRentals / company.maxActiveRentals) * 100}%` }} />
+              <div className="h-2 bg-tertiary rounded-full" style={{ width: `${(company.activeRentals / company.maxActiveRentals) * 100}%` }} />
             </div>
           </div>
         </div>
@@ -128,35 +129,89 @@ export default function CompanyDetailPage() {
         </div>
       </div>
 
-      {/* Rental History */}
-      <div className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
-        <h3 className="text-sm font-semibold text-primary mb-4">Rental History ({companyBookings.length})</h3>
-        {companyBookings.length === 0 ? (
-          <p className="text-sm text-secondary">No rental history.</p>
+      {/* Contracts */}
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100">
+          <h3 className="text-sm font-semibold text-primary">Contracts ({companyContracts.length})</h3>
+        </div>
+        {companyContracts.length === 0 ? (
+          <p className="px-5 py-6 text-sm text-secondary">No contracts found.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left py-2 pr-4 text-xs text-secondary font-medium">Booking</th>
-                  <th className="text-left px-4 py-2 text-xs text-secondary font-medium">Model</th>
-                  <th className="text-left px-4 py-2 text-xs text-secondary font-medium">Pick-up</th>
-                  <th className="text-left px-4 py-2 text-xs text-secondary font-medium">Return</th>
-                  <th className="text-left px-4 py-2 text-xs text-secondary font-medium">Total</th>
-                  <th className="text-left px-4 py-2 text-xs text-secondary font-medium">Status</th>
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Contract ID</th>
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Models</th>
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Vehicles</th>
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Period</th>
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Total</th>
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Status</th>
                 </tr>
               </thead>
               <tbody>
-                {companyBookings.map((b) => (
-                  <tr key={b.id} className="border-b border-gray-50">
-                    <td className="py-2 pr-4">
-                      <Link href={`/admin/bookings/${b.id}`} className="text-tertiary hover:underline font-mono text-xs">{b.id.toUpperCase()}</Link>
+                {companyContracts.map((c) => {
+                  const totalVehicles = c.lines.reduce((sum, l) => sum + l.assignedCars.length, 0);
+                  return (
+                    <tr key={c.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50">
+                      <td className="px-5 py-3">
+                        <Link href={`/admin/contracts/${c.id}`} className="font-mono text-xs font-semibold text-tertiary hover:underline">
+                          {c.id.toUpperCase()}
+                        </Link>
+                      </td>
+                      <td className="px-5 py-3 text-secondary">
+                        {c.lines.map((l) => `${l.modelName}${l.bodyType ? ` (${l.bodyType})` : ""}`).join(", ")}
+                      </td>
+                      <td className="px-5 py-3 text-secondary">{totalVehicles}</td>
+                      <td className="px-5 py-3 text-secondary whitespace-nowrap">
+                        {formatDate(c.startDate)} → {formatDate(c.endDate)}
+                      </td>
+                      <td className="px-5 py-3 font-medium">{formatBaht(c.total)}</td>
+                      <td className="px-5 py-3"><StatusBadge status={c.status} /></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Rent Requests */}
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-gray-100">
+          <h3 className="text-sm font-semibold text-primary">Rent Requests ({companyRequests.length})</h3>
+        </div>
+        {companyRequests.length === 0 ? (
+          <p className="px-5 py-6 text-sm text-secondary">No rent requests found.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 bg-gray-50">
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Request ID</th>
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Models Requested</th>
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Period</th>
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Type</th>
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {companyRequests.map((r) => (
+                  <tr key={r.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50">
+                    <td className="px-5 py-3">
+                      <Link href={`/admin/requests/${r.id}`} className="font-mono text-xs font-semibold text-tertiary hover:underline">
+                        {r.id.toUpperCase()}
+                      </Link>
                     </td>
-                    <td className="px-4 py-2">{b.brandName} {b.modelName}</td>
-                    <td className="px-4 py-2 text-secondary">{formatDate(b.pickupDate)}</td>
-                    <td className="px-4 py-2 text-secondary">{formatDate(b.returnDate)}</td>
-                    <td className="px-4 py-2 font-medium">{formatBaht(b.total)}</td>
-                    <td className="px-4 py-2"><StatusBadge status={b.status} /></td>
+                    <td className="px-5 py-3 text-secondary">
+                      {r.requestedModels.map((m) => `${m.modelName} ×${m.qty}`).join(", ")}
+                    </td>
+                    <td className="px-5 py-3 text-secondary whitespace-nowrap">
+                      {formatDate(r.startDate)} → {formatDate(r.endDate)}
+                    </td>
+                    <td className="px-5 py-3 text-secondary">{r.contractType} · {r.durationType}</td>
+                    <td className="px-5 py-3"><StatusBadge status={r.status} /></td>
                   </tr>
                 ))}
               </tbody>
@@ -188,7 +243,7 @@ export default function CompanyDetailPage() {
           </div>
           <div className="flex gap-2 justify-end">
             <button onClick={() => setAddUserOpen(false)} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
-            <button onClick={addUser} className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800">Add User</button>
+            <button onClick={addUser} className="px-4 py-2 text-sm bg-tertiary text-white rounded-lg hover:bg-tertiary-dark">Add User</button>
           </div>
         </div>
       </Modal>

@@ -46,7 +46,7 @@ export default function BillingPage() {
           <p className="text-2xl font-bold mt-1">{formatBaht(pendingBookings.reduce((s, b) => s + b.deposit, 0))}</p>
           <p className="text-xs text-secondary mt-0.5">{pendingBookings.length} active booking{pendingBookings.length !== 1 ? "s" : ""}</p>
         </div>
-        <button onClick={() => setPayModal(true)} className="bg-black text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors">
+        <button onClick={() => setPayModal(true)} className="bg-tertiary text-white text-sm px-4 py-2 rounded-lg hover:bg-tertiary-dark transition-colors">
           Make Payment
         </button>
       </div>
@@ -87,7 +87,7 @@ export default function BillingPage() {
               { method: "PromptPay", icon: <QrCode size={16} /> },
             ].map(({ method, icon }) => (
               <button key={method} onClick={() => setPayMethod(method)}
-                className={`flex items-center gap-3 border rounded-xl p-4 transition-colors ${payMethod === method ? "border-black bg-gray-50" : "border-gray-200 hover:border-gray-400"}`}>
+                className={`flex items-center gap-3 border rounded-xl p-4 transition-colors ${payMethod === method ? "border-tertiary bg-gray-50" : "border-gray-200 hover:border-gray-400"}`}>
                 <span className="text-secondary">{icon}</span>
                 <span className="text-sm font-medium">{method}</span>
               </button>
@@ -96,7 +96,7 @@ export default function BillingPage() {
           <div className="flex gap-2 justify-end">
             <button onClick={() => setPayModal(false)} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
             <button onClick={() => { setPayModal(false); toast("success", `Payment via ${payMethod} completed successfully.`); }}
-              className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800">Confirm Payment</button>
+              className="px-4 py-2 text-sm bg-tertiary text-white rounded-lg hover:bg-tertiary-dark">Confirm Payment</button>
           </div>
         </div>
       </Modal>

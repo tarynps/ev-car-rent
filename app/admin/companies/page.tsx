@@ -28,8 +28,8 @@ export default function CompaniesPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-semibold text-primary">Company / Renter Accounts</h1>
-        <p className="text-sm text-secondary mt-0.5">{companies.length} companies registered</p>
+        <h1 className="text-xl font-semibold text-primary">Clients</h1>
+        <p className="text-sm text-secondary mt-0.5">{companies.length} clients registered</p>
       </div>
       <DataTable columns={columns as Parameters<typeof DataTable>[0]["columns"]} data={companies as unknown as Record<string, unknown>[]} />
     </div>

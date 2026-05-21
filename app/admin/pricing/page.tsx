@@ -31,25 +31,19 @@ export default function PricingPage() {
     { key: "deposit", label: "Deposit" },
   ];
 
-  const addOnFields: { key: keyof PricingTier; label: string }[] = [
-    { key: "addonCharger", label: "Portable Charger /day" },
-    { key: "addonChildSeat", label: "Child Seat /day" },
-    { key: "addonInsurance", label: "Extra Insurance /day" },
-  ];
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold text-primary">Pricing Management</h1>
-          <p className="text-sm text-secondary mt-0.5">Set rates per model and add-on pricing</p>
+          <p className="text-sm text-secondary mt-0.5">Set rates per model</p>
         </div>
         <div className="flex items-center gap-3">
           <label className="flex items-center gap-2 text-sm text-secondary cursor-pointer">
             <input type="checkbox" checked={vatInclusive} onChange={(e) => setVatInclusive(e.target.checked)} className="rounded" />
             VAT Inclusive (7%)
           </label>
-          <button onClick={save} className="flex items-center gap-2 bg-black text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-800">
+          <button onClick={save} className="flex items-center gap-2 bg-tertiary text-white text-sm px-4 py-2 rounded-lg hover:bg-tertiary-dark">
             <Save size={14} /> Save Changes
           </button>
         </div>
@@ -91,41 +85,6 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* Add-ons */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="px-5 py-3 border-b border-gray-100">
-          <h3 className="text-sm font-semibold text-primary">Add-on Pricing</h3>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-100 bg-gray-50">
-                <th className="text-left px-4 py-3 text-xs text-secondary font-medium">Model</th>
-                {addOnFields.map((f) => (
-                  <th key={f.key} className="text-left px-4 py-3 text-xs text-secondary font-medium whitespace-nowrap">{f.label} (฿)</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {tiers.map((tier) => (
-                <tr key={tier.modelId} className="border-b border-gray-50">
-                  <td className="px-4 py-3 font-medium">{tier.modelName}</td>
-                  {addOnFields.map((f) => (
-                    <td key={f.key} className="px-4 py-3">
-                      <input
-                        type="number"
-                        value={tier[f.key] as number}
-                        onChange={(e) => updateTier(tier.modelId, f.key, Number(e.target.value))}
-                        className="w-24 border border-gray-200 rounded-lg px-2 py-1 text-sm text-right focus:border-tertiary focus:outline-none"
-                      />
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
   );
 }

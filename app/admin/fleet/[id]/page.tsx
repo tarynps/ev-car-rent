@@ -219,7 +219,7 @@ export default function FleetDetailPage() {
           </div>
           <div className="flex gap-2 justify-end">
             <button onClick={() => setAddMaintenanceOpen(false)} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
-            <button onClick={addMaintenance} className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800">Save</button>
+            <button onClick={addMaintenance} className="px-4 py-2 text-sm bg-tertiary text-white rounded-lg hover:bg-tertiary-dark">Save</button>
           </div>
         </div>
       </Modal>
@@ -231,7 +231,7 @@ export default function FleetDetailPage() {
           <div className="flex flex-col gap-2">
             {availableCars.slice(0, 5).map((c) => (
               <button key={c.id} onClick={() => setSwapOpen(false)}
-                className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3 hover:border-black transition-colors text-left">
+                className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3 hover:border-tertiary transition-colors text-left">
                 <div>
                   <p className="text-sm font-medium">{c.licensePlate}</p>
                   <p className="text-xs text-secondary">{c.brandName} {c.modelName}</p>

@@ -89,7 +89,7 @@ export default function ModelsPage() {
           <p className="text-sm text-secondary mt-0.5">{brands.length} brands · {models.length} models</p>
         </div>
         <button onClick={() => { setBrandForm({ name: "" }); setBrandModal({ open: true }); }}
-          className="flex items-center gap-2 bg-black text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors">
+          className="flex items-center gap-2 bg-tertiary text-white text-sm px-4 py-2 rounded-lg hover:bg-tertiary-dark transition-colors">
           <Plus size={15} /> Add Brand
         </button>
       </div>
@@ -125,6 +125,12 @@ export default function ModelsPage() {
                 <div className="border-t border-gray-100 px-5 py-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                   {brandModels.map((model) => (
                     <div key={model.id} className="border border-gray-100 rounded-xl p-4 flex flex-col gap-3">
+                      {model.photos[0] && (
+                        <img
+                          src={model.photos[0]} alt={model.name}
+                          className="w-full h-32 object-contain rounded-lg bg-gray-50"
+                        />
+                      )}
                       <div className="flex items-start justify-between">
                         <div>
                           <p className="font-semibold text-primary">{model.name}</p>
@@ -170,7 +176,7 @@ export default function ModelsPage() {
           </div>
           <div className="flex gap-2 justify-end">
             <button onClick={() => setBrandModal({ open: false })} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
-            <button onClick={saveBrand} className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800">Save</button>
+            <button onClick={saveBrand} className="px-4 py-2 text-sm bg-tertiary text-white rounded-lg hover:bg-tertiary-dark">Save</button>
           </div>
         </div>
       </Modal>
@@ -220,7 +226,7 @@ export default function ModelsPage() {
             <div className="flex gap-2 flex-wrap">
               {ALL_CONNECTORS.map((c) => (
                 <button key={c} onClick={() => toggleConnector(c)}
-                  className={`px-3 py-1 text-xs rounded-full border transition-colors ${modelForm.connectors.includes(c) ? "bg-black text-white border-black" : "border-gray-200 text-secondary hover:border-gray-400"}`}>
+                  className={`px-3 py-1 text-xs rounded-full border transition-colors ${modelForm.connectors.includes(c) ? "bg-tertiary text-white border-tertiary" : "border-gray-200 text-secondary hover:border-gray-400"}`}>
                   {c}
                 </button>
               ))}
@@ -237,7 +243,7 @@ export default function ModelsPage() {
           </div>
           <div className="flex gap-2 justify-end">
             <button onClick={() => setModelModal({ open: false })} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
-            <button onClick={() => saveModel(modelModal.brandId!)} className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800">Save Model</button>
+            <button onClick={() => saveModel(modelModal.brandId!)} className="px-4 py-2 text-sm bg-tertiary text-white rounded-lg hover:bg-tertiary-dark">Save Model</button>
           </div>
         </div>
       </Modal>

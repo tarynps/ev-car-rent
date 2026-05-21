@@ -19,6 +19,7 @@ export interface CarModel {
   brandId: string;
   brandName: string;
   name: string;
+  bodyType?: string;
   year: number;
   batteryKwh: number;
   rangeWltp: number;
@@ -37,6 +38,7 @@ export interface Car {
   modelId: string;
   brandName: string;
   modelName: string;
+  bodyType?: string;
   year: number;
   color: string;
   status: CarStatus;
@@ -96,7 +98,7 @@ export interface AddOn {
 }
 
 export interface ApprovalStep {
-  step: "Submitted" | "Manager Approved" | "Admin Approved" | "Confirmed";
+  step: "Submitted" | "Sales Review" | "Manager Approved" | "Admin Approved" | "Confirmed" | "Contract Generated";
   actorName?: string;
   timestamp?: string;
   status: "done" | "current" | "pending" | "rejected";
@@ -230,12 +232,49 @@ export interface RentToSellEntry {
   licensePlate: string;
   modelName: string;
   brandName: string;
+  companyId: string;
   companyName: string;
   contractStart: string;
   totalPaid: number;
   buyoutAmount: number;
   conversionStatus: ConversionStatus;
   bookingId: string;
+}
+
+export interface ContractLine {
+  modelId: string;
+  modelName: string;
+  bodyType?: string;
+  brandName: string;
+  assignedCars: { carId: string; licensePlate: string }[];
+  baseRate: number;
+}
+
+export interface Contract {
+  id: string;
+  companyId: string;
+  companyName: string;
+  contactName: string;
+  contactPhone: string;
+  contactEmail: string;
+  contractType: ContractType;
+  durationType: DurationType;
+  startDate: string;
+  endDate: string;
+  pickupLocationId: string;
+  pickupLocationName: string;
+  returnLocationId: string;
+  returnLocationName: string;
+  lines: ContractLine[];
+  addOns: AddOn;
+  deposit: number;
+  vat: number;
+  total: number;
+  status: BookingStatus;
+  approvalSteps: ApprovalStep[];
+  createdAt: string;
+  extensionRequest?: ExtensionRequest;
+  cancellationReason?: string;
 }
 
 export interface AppNotification {
@@ -254,4 +293,78 @@ export interface AdminUser {
   email: string;
   role: "Super Admin" | "Manager";
   createdAt: string;
+}
+
+export interface TelematicsVehicle {
+  carId: string;
+  licensePlate: string;
+  modelName: string;
+  brandName: string;
+  companyId: string;
+  lat: number;
+  lng: number;
+  speed: number;
+  batteryPct: number;
+  isCharging: boolean;
+  ignitionOn: boolean;
+  odometer: number;
+  lastUpdated: string;
+}
+
+export interface TripRecord {
+  id: string;
+  carId: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  startLocation: string;
+  endLocation: string;
+  distanceKm: number;
+  durationMin: number;
+}
+
+export type BehaviorEventType = "Hard Braking" | "Rapid Acceleration" | "Speeding" | "Idle";
+
+export interface BehaviorEvent {
+  id: string;
+  carId: string;
+  timestamp: string;
+  type: BehaviorEventType;
+  location: string;
+  severity: "Low" | "Medium" | "High";
+}
+
+export interface PurchaseOffer {
+  contractId: string;
+  carId: string;
+  licensePlate: string;
+  modelName: string;
+  buyoutAmount: number;
+  totalPaid: number;
+  totalBuyout: number;
+  offerExpiry: string;
+  status: "Available" | "Accepted" | "Expired";
+}
+
+export interface RequestedModel {
+  modelName: string;
+  bodyType?: string;
+  qty: number;
+}
+
+export interface RentRequest {
+  id: string;
+  companyName: string;
+  contactName: string;
+  contactPhone: string;
+  contactEmail: string;
+  requestedModels: RequestedModel[];
+  startDate: string;
+  endDate: string;
+  contractType: "Rent-and-Return" | "Rent-to-Sell";
+  durationType: "Daily" | "Weekly" | "Monthly" | "Yearly";
+  notes?: string;
+  status: "Pending" | "Approved" | "Rejected";
+  createdAt: string;
+  approvalSteps: ApprovalStep[];
 }

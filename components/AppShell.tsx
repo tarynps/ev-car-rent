@@ -1,32 +1,34 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Car, Database, CalendarCheck, CheckSquare,
   DollarSign, BarChart2, RefreshCw, Building, Settings,
-  User, Search, BookOpen, CreditCard, Bell, Menu, X, Zap,
+  User, Search, BookOpen, CreditCard, Bell, Menu, X, Radio,
 } from "lucide-react";
 import { useState } from "react";
 import { notifications } from "@/lib/mock-data";
 
 const adminNav = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/fleet", label: "Fleet", icon: Car },
+  { href: "/admin/fleet", label: "Inventory Management", icon: Car },
   { href: "/admin/models", label: "Models", icon: Database },
-  { href: "/admin/bookings", label: "Bookings", icon: CalendarCheck },
-  { href: "/admin/approvals", label: "Approvals", icon: CheckSquare },
+  { href: "/admin/contracts", label: "Contracts", icon: CalendarCheck },
+  { href: "/admin/requests", label: "Requests", icon: CheckSquare },
   { href: "/admin/pricing", label: "Pricing", icon: DollarSign },
   { href: "/admin/finance", label: "Finance", icon: BarChart2 },
   { href: "/admin/rent-to-sell", label: "Rent-to-Sell", icon: RefreshCw },
-  { href: "/admin/companies", label: "Companies", icon: Building },
+  { href: "/admin/companies", label: "Clients", icon: Building },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 const renterNav = [
   { href: "/renter/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/renter/vehicles", label: "Browse Vehicles", icon: Search },
-  { href: "/renter/bookings", label: "My Bookings", icon: BookOpen },
+  { href: "/renter/vehicles", label: "Vehicle Catalog", icon: Search },
+  { href: "/renter/fleet", label: "My Fleet", icon: BookOpen },
+  { href: "/renter/telematics", label: "Telematics", icon: Radio },
   { href: "/renter/billing", label: "Billing", icon: CreditCard },
   { href: "/renter/account", label: "Account", icon: User },
   { href: "/renter/notifications", label: "Notifications", icon: Bell },
@@ -42,18 +44,14 @@ export default function AppShell({ children, variant }: { children: React.ReactN
   const sidebarContent = (
     <div className="flex flex-col h-full">
       <div className={`px-6 py-5 border-b ${isRenter ? "border-slate-700/50" : "border-gray-100"}`}>
-        <div className="flex items-center gap-2">
-          <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${isRenter ? "bg-blue-600" : "bg-black"}`}>
-            {isRenter ? <Zap size={14} className="text-white" /> : <Car size={14} className="text-white" />}
+        <div className="flex flex-col gap-1">
+          <div className="relative h-8 w-40">
+            <Image src="/logo.png" alt="Dah Chong Hong Holdings" fill
+              className={`object-contain object-left ${isRenter ? "brightness-0 invert" : ""}`} unoptimized />
           </div>
-          <div>
-            <p className={`text-sm font-semibold ${isRenter ? "text-white" : "text-gray-900"}`}>
-              {isRenter ? "EV Drive" : "EV Fleet"}
-            </p>
-            <p className={`text-xs ${isRenter ? "text-slate-400" : "text-gray-500"}`}>
-              {isRenter ? "Renter Portal" : "Admin Portal"}
-            </p>
-          </div>
+          <p className={`text-xs ${isRenter ? "text-slate-400" : "text-gray-500"}`}>
+            {isRenter ? "Renter Portal" : "Admin Portal"}
+          </p>
         </div>
       </div>
 
@@ -68,22 +66,22 @@ export default function AppShell({ children, variant }: { children: React.ReactN
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm mb-0.5 transition-colors ${
                 isRenter
                   ? active
-                    ? "bg-blue-500/10 text-blue-400 font-medium"
+                    ? "bg-tertiary-tint text-tertiary font-medium"
                     : "text-slate-400 hover:bg-slate-800 hover:text-white"
                   : active
-                    ? "bg-black text-white font-medium"
+                    ? "bg-tertiary-tint text-tertiary font-medium"
                     : "text-gray-500 hover:bg-gray-100 hover:text-gray-900"
               }`}
             >
               <Icon size={16} />
               <span>{label}</span>
               {label === "Notifications" && unread > 0 && (
-                <span className={`ml-auto text-xs rounded-full w-4 h-4 flex items-center justify-center ${isRenter ? "bg-blue-500 text-white" : "bg-blue-600 text-white"}`}>
+                <span className="ml-auto text-xs rounded-full w-4 h-4 flex items-center justify-center text-white bg-tertiary">
                   {unread}
                 </span>
               )}
-              {label === "Approvals" && (
-                <span className="ml-auto text-xs bg-orange-400 text-white rounded-full w-4 h-4 flex items-center justify-center">2</span>
+              {label === "Requests" && (
+                <span className="ml-auto text-xs text-white rounded-full w-4 h-4 flex items-center justify-center bg-tertiary">2</span>
               )}
             </Link>
           );
@@ -141,7 +139,7 @@ export default function AppShell({ children, variant }: { children: React.ReactN
               <Link href="/renter/notifications" className="relative p-1.5 text-gray-500 hover:text-gray-900 transition-colors">
                 <Bell size={18} />
                 {unread > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-blue-600 text-white text-[9px] rounded-full flex items-center justify-center">
+                  <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 text-white text-[9px] rounded-full flex items-center justify-center bg-tertiary">
                     {unread}
                   </span>
                 )}

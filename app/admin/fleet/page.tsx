@@ -14,14 +14,16 @@ export default function FleetPage() {
   const [cars, setCars] = useState(initialCars);
   const [statusFilter, setStatusFilter] = useState("");
   const [brandFilter, setBrandFilter] = useState("");
+  const [bodyTypeFilter, setBodyTypeFilter] = useState("");
   const [addOpen, setAddOpen] = useState(false);
   const [form, setForm] = useState({ licensePlate: "", modelId: "", rfidCard: "", notes: "" });
 
   const filtered = useMemo(() => cars.filter((c) => {
     if (statusFilter && c.status !== statusFilter) return false;
     if (brandFilter && c.brandName !== brandFilter) return false;
+    if (bodyTypeFilter && (c.bodyType ?? "—") !== bodyTypeFilter) return false;
     return true;
-  }), [cars, statusFilter, brandFilter]);
+  }), [cars, statusFilter, brandFilter, bodyTypeFilter]);
 
   function handleAdd() {
     const model = carModels.find((m) => m.id === form.modelId);
@@ -40,6 +42,7 @@ export default function FleetPage() {
   }
 
   const uniqueBrands = [...new Set(cars.map((c) => c.brandName))];
+  const uniqueBodyTypes = [...new Set(cars.map((c) => c.bodyType).filter(Boolean))] as string[];
 
   const columns = [
     { key: "licensePlate", header: "License Plate", render: (row: Car) => (
@@ -47,6 +50,9 @@ export default function FleetPage() {
     )},
     { key: "brandName", header: "Brand" },
     { key: "modelName", header: "Model" },
+    { key: "bodyType", header: "Body Type", render: (row: Car) => (
+      <span className="text-secondary">{row.bodyType ? <span className="text-xs bg-gray-100 px-2 py-0.5 rounded-full">{row.bodyType}</span> : "—"}</span>
+    )},
     { key: "year", header: "Year" },
     { key: "status", header: "Status", render: (row: Car) => <StatusBadge status={row.status} /> },
     { key: "currentRenterName", header: "Current Renter", render: (row: Car) => (
@@ -63,10 +69,10 @@ export default function FleetPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-primary">Fleet Management</h1>
+          <h1 className="text-xl font-semibold text-primary">Inventory Management</h1>
           <p className="text-sm text-secondary mt-0.5">{cars.length} vehicles registered</p>
         </div>
-        <button onClick={() => setAddOpen(true)} className="flex items-center gap-2 bg-black text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors">
+        <button onClick={() => setAddOpen(true)} className="flex items-center gap-2 bg-tertiary text-white text-sm px-4 py-2 rounded-lg hover:bg-tertiary-dark transition-colors">
           <Plus size={15} /> Add Car
         </button>
       </div>
@@ -81,8 +87,14 @@ export default function FleetPage() {
           <option value="">All Brands</option>
           {uniqueBrands.map((b) => <option key={b}>{b}</option>)}
         </select>
-        {(statusFilter || brandFilter) && (
-          <button onClick={() => { setStatusFilter(""); setBrandFilter(""); }} className="text-xs text-tertiary hover:underline">
+        {uniqueBodyTypes.length > 0 && (
+          <select value={bodyTypeFilter} onChange={(e) => setBodyTypeFilter(e.target.value)} className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm bg-white text-primary">
+            <option value="">All Body Types</option>
+            {uniqueBodyTypes.map((bt) => <option key={bt}>{bt}</option>)}
+          </select>
+        )}
+        {(statusFilter || brandFilter || bodyTypeFilter) && (
+          <button onClick={() => { setStatusFilter(""); setBrandFilter(""); setBodyTypeFilter(""); }} className="text-xs text-tertiary hover:underline">
             Clear filters
           </button>
         )}
@@ -121,7 +133,7 @@ export default function FleetPage() {
           </div>
           <div className="flex gap-2 justify-end">
             <button onClick={() => setAddOpen(false)} className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
-            <button onClick={handleAdd} className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800">Add Car</button>
+            <button onClick={handleAdd} className="px-4 py-2 text-sm bg-tertiary text-white rounded-lg hover:bg-tertiary-dark">Add Car</button>
           </div>
         </div>
       </Modal>
