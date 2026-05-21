@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Car, Database, CalendarCheck, CheckSquare,
   DollarSign, BarChart2, RefreshCw, Building, Settings,
-  User, Search, BookOpen, CreditCard, Bell, Menu, X, Zap, Radio,
+  User, Search, BookOpen, CreditCard, Bell, Menu, X, Radio,
 } from "lucide-react";
 import { useState } from "react";
 import { notifications } from "@/lib/mock-data";
@@ -43,18 +44,14 @@ export default function AppShell({ children, variant }: { children: React.ReactN
   const sidebarContent = (
     <div className="flex flex-col h-full">
       <div className={`px-6 py-5 border-b ${isRenter ? "border-slate-700/50" : "border-gray-100"}`}>
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-tertiary">
-            {isRenter ? <Zap size={14} className="text-white" /> : <Car size={14} className="text-white" />}
+        <div className="flex flex-col gap-1">
+          <div className="relative h-8 w-40">
+            <Image src="/logo.png" alt="Dah Chong Hong Holdings" fill
+              className={`object-contain object-left ${isRenter ? "brightness-0 invert" : ""}`} unoptimized />
           </div>
-          <div>
-            <p className={`text-sm font-semibold ${isRenter ? "text-white" : "text-gray-900"}`}>
-              {isRenter ? "EV Drive" : "EV Fleet"}
-            </p>
-            <p className={`text-xs ${isRenter ? "text-slate-400" : "text-gray-500"}`}>
-              {isRenter ? "Renter Portal" : "Admin Portal"}
-            </p>
-          </div>
+          <p className={`text-xs ${isRenter ? "text-slate-400" : "text-gray-500"}`}>
+            {isRenter ? "Renter Portal" : "Admin Portal"}
+          </p>
         </div>
       </div>
 

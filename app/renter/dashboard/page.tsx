@@ -1,22 +1,38 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import {
+  Activity,
   AlertTriangle,
   BatteryCharging,
   BellRing,
+  Car,
   CarFront,
   ChevronRight,
+  Clock,
   Gauge,
   MapPin,
   Radio,
   Route,
+  Shield,
   ShieldAlert,
   Timer,
+  TrendingUp,
   Zap,
 } from "lucide-react";
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell,
+} from "recharts";
 import StatusBadge from "@/components/StatusBadge";
-import { bookings, carModels, cars, contracts, rentToSellEntries } from "@/lib/mock-data";
+import {
+  bookings, carModels, cars, contracts, rentToSellEntries,
+  telematicsVehicles, tripRecords, behaviorEvents,
+} from "@/lib/mock-data";
 import { daysUntil, formatBaht, formatDate } from "@/lib/utils";
+
+// ── Original data helpers ─────────────────────────────────────────────────────
 
 const vehicleCategoryByModel: Record<string, string> = {
   m1: "6-wheel",
@@ -80,6 +96,97 @@ function getModelPhoto(modelId: string) {
 function getVehicleCategory(modelId: string) {
   return vehicleCategoryByModel[modelId] ?? "Fleet vehicle";
 }
+
+// ── Telematics analytics data ─────────────────────────────────────────────────
+
+const TODAY = "2026-05-20";
+const myVehicles = telematicsVehicles.filter((v) => v.companyId === "c1");
+const activeCount = myVehicles.filter((v) => v.ignitionOn).length;
+const chargingCountLive = myVehicles.filter((v) => v.isCharging).length;
+
+const myTrips = tripRecords.filter((t) => myVehicles.some((v) => v.carId === t.carId));
+const todayTrips = myTrips.filter((t) => t.date === TODAY);
+const todayDistance = todayTrips.reduce((s, t) => s + t.distanceKm, 0);
+
+const myEvents = behaviorEvents.filter((e) => myVehicles.some((v) => v.carId === e.carId));
+const todayEvents = myEvents.filter((e) => e.timestamp.startsWith(TODAY));
+
+const severityWeight = { High: 15, Medium: 8, Low: 3 } as const;
+const safetyScore = Math.max(0, Math.round(
+  100 - myEvents.reduce((s, e) => s + (severityWeight[e.severity as keyof typeof severityWeight] ?? 5), 0)
+));
+const safetyColor = safetyScore >= 80 ? "#22c55e" : safetyScore >= 60 ? "#f59e0b" : "#ef4444";
+const utilisationPct = Math.round((activeCount / (myVehicles.length || 1)) * 100);
+
+const distanceByDay = ["2026-05-18", "2026-05-19", "2026-05-20"].map((date) => ({
+  date: date.slice(5),
+  km: Math.round(myTrips.filter((t) => t.date === date).reduce((s, t) => s + t.distanceKm, 0)),
+}));
+
+const eventsByType = ["Hard Braking", "Speeding", "Rapid Acceleration", "Idle"].map((type) => ({
+  type: type === "Rapid Acceleration" ? "Rapid Accel." : type,
+  count: myEvents.filter((e) => e.type === type).length,
+}));
+
+const recentEvents = [...myEvents]
+  .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
+  .slice(0, 5);
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function KpiCard({ label, value, sub, icon: Icon, color }: {
+  label: string; value: string | number; sub?: string;
+  icon: React.ElementType; color: string;
+}) {
+  return (
+    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+      <div className="flex items-start justify-between mb-3">
+        <p className="text-xs font-medium text-secondary uppercase tracking-wide">{label}</p>
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${color}18` }}>
+          <Icon size={15} style={{ color }} />
+        </div>
+      </div>
+      <p className="text-3xl font-bold text-primary">{value}</p>
+      {sub && <p className="text-xs text-secondary mt-1">{sub}</p>}
+    </div>
+  );
+}
+
+function GaugeDonut({ value, color, label, sub }: { value: number; color: string; label: string; sub: string }) {
+  const data = [{ v: value }, { v: 100 - value }];
+  return (
+    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+      <p className="text-sm font-semibold text-primary mb-0.5">{label}</p>
+      <p className="text-xs text-secondary mb-4">{sub}</p>
+      <div className="flex items-center gap-6">
+        <div className="relative w-28 h-28 shrink-0">
+          <PieChart width={112} height={112}>
+            <Pie data={data} dataKey="v" cx={52} cy={52} innerRadius={36} outerRadius={52}
+              startAngle={90} endAngle={-270} strokeWidth={0}>
+              <Cell fill={color} />
+              <Cell fill="#F3F4F6" />
+            </Pie>
+          </PieChart>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-xl font-bold" style={{ color }}>{value}%</span>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2 text-sm">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
+            <span className="text-primary font-medium">{value}%</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-gray-200" />
+            <span className="text-secondary">{100 - value}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function RenterDashboard() {
   const myCompanyId = "c1";
@@ -162,6 +269,8 @@ export default function RenterDashboard() {
 
   return (
     <div className="flex flex-col gap-6">
+
+      {/* Welcome Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-tertiary">Corporate fleet overview</p>
@@ -176,15 +285,16 @@ export default function RenterDashboard() {
         </Link>
       </div>
 
+      {/* Fleet Summary */}
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-secondary">Fleet Summary</h2>
-          <Link href="/renter/bookings" className="text-xs text-tertiary hover:underline">Open My Fleet</Link>
+          <Link href="/renter/fleet" className="text-xs text-tertiary hover:underline">Open My Fleet</Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-6 gap-3">
           {summaryCards.map(({ label, value, note, icon: Icon }) => (
-            <div key={label} className="bg-surface rounded-xl border border-gray-100 shadow-sm p-4">
+            <div key={label} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-xs uppercase tracking-wide text-secondary">{label}</p>
                 <Icon size={15} className="text-tertiary" />
@@ -196,7 +306,7 @@ export default function RenterDashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2 bg-surface rounded-xl border border-gray-100 shadow-sm p-5">
+          <div className="lg:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-primary">Vehicles by Car Type</h3>
               <span className="text-xs text-secondary">{activeRentals.length} active units</span>
@@ -219,13 +329,13 @@ export default function RenterDashboard() {
             </div>
           </div>
 
-          <div className="bg-surface rounded-xl border border-gray-100 shadow-sm p-5">
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <h3 className="text-sm font-semibold text-primary">Contracts Expiring Within 30 Days</h3>
             <div className="mt-4 flex flex-col gap-3">
               {expiringContracts.length === 0 ? (
                 <p className="text-sm text-secondary">No contracts expiring in the next 30 days.</p>
               ) : expiringContracts.map((booking) => (
-                <Link key={booking.id} href={`/renter/bookings/${booking.id}`} className="rounded-lg border border-tertiary/20 bg-tertiary-tint p-3 block">
+                <Link key={booking.id} href={`/renter/fleet/${booking.id}`} className="rounded-lg border border-tertiary/20 bg-tertiary-tint p-3 block">
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <p className="text-sm font-semibold text-primary">{booking.brandName} {booking.modelName}</p>
@@ -240,6 +350,7 @@ export default function RenterDashboard() {
         </div>
       </section>
 
+      {/* Telematics Overview (original) */}
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-secondary">Telematics Overview</h2>
@@ -247,7 +358,7 @@ export default function RenterDashboard() {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-          <div className="xl:col-span-2 bg-surface rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="xl:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
             <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-semibold text-primary">Fleet Live Map</h3>
@@ -265,7 +376,7 @@ export default function RenterDashboard() {
               {fleetTelemetry.map(({ booking, telemetry }) => (
                 <Link
                   key={booking.id}
-                  href={`/renter/bookings/${booking.id}`}
+                  href={`/renter/telematics/${booking.carId}`}
                   className="absolute -translate-x-1/2 -translate-y-1/2 group"
                   style={{ left: `${telemetry.mapX}%`, top: `${telemetry.mapY}%` }}
                 >
@@ -286,7 +397,7 @@ export default function RenterDashboard() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4">
-            <div className="bg-surface rounded-xl border border-gray-100 shadow-sm p-5">
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-primary">Battery Summary</h3>
                 <BatteryCharging size={16} className="text-tertiary" />
@@ -308,7 +419,7 @@ export default function RenterDashboard() {
               </div>
             </div>
 
-            <div className="bg-surface rounded-xl border border-gray-100 shadow-sm p-5">
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-primary">Active Alerts</h3>
                 <AlertTriangle size={16} className="text-tertiary" />
@@ -326,7 +437,7 @@ export default function RenterDashboard() {
             { label: "Speeding", value: behaviorTotals.speeding, suffix: "events", icon: Gauge },
             { label: "Idle Time", value: behaviorTotals.idleHours.toFixed(1), suffix: "hours", icon: Timer },
           ].map(({ label, value, suffix, icon: Icon }) => (
-            <div key={label} className="bg-surface rounded-xl border border-gray-100 shadow-sm p-4">
+            <div key={label} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-xs uppercase tracking-wide text-secondary">{label}</p>
                 <Icon size={15} className="text-tertiary" />
@@ -337,10 +448,10 @@ export default function RenterDashboard() {
           ))}
         </div>
 
-        <div className="bg-surface rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-primary">Vehicle Telemetry List</h3>
-            <Link href="/renter/bookings" className="text-xs text-tertiary hover:underline">View fleet</Link>
+            <Link href="/renter/fleet" className="text-xs text-tertiary hover:underline">View fleet</Link>
           </div>
           <div className="divide-y divide-gray-50">
             {fleetTelemetry.map(({ booking, car, telemetry }) => (
@@ -366,6 +477,7 @@ export default function RenterDashboard() {
         </div>
       </section>
 
+      {/* Purchase Offer Alerts */}
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-secondary">Purchase Offer Alerts</h2>
@@ -373,13 +485,13 @@ export default function RenterDashboard() {
         </div>
 
         {purchaseOfferAlerts.length === 0 ? (
-          <div className="bg-surface rounded-xl border border-gray-100 shadow-sm p-6">
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
             <p className="text-sm text-secondary">No purchase offers have been sent by admin yet.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {purchaseOfferAlerts.map((offer) => (
-              <div key={offer.carId} className="bg-surface rounded-xl border border-tertiary/20 shadow-sm overflow-hidden">
+              <div key={offer.carId} className="bg-white rounded-xl border border-tertiary/20 shadow-sm overflow-hidden">
                 <div className="p-4 flex gap-4">
                   <div className="relative w-28 h-20 rounded-lg bg-gray-50 overflow-hidden shrink-0">
                     {offer.photo ? (
@@ -426,7 +538,7 @@ export default function RenterDashboard() {
                 <div className="px-4 py-3 bg-tertiary-tint/50 border-t border-tertiary/10 flex items-center justify-between gap-3">
                   <p className="text-xs text-secondary">Offer expiry: 30 Jun 2026</p>
                   <Link
-                    href={offer.booking ? `/renter/bookings/${offer.booking.id}/rent-to-sell` : "/renter/bookings"}
+                    href={offer.booking ? `/renter/fleet/${offer.booking.id}` : "/renter/fleet"}
                     className="inline-flex items-center gap-1.5 text-xs font-medium text-tertiary hover:underline"
                   >
                     View Offer <ChevronRight size={12} />
@@ -437,6 +549,169 @@ export default function RenterDashboard() {
           </div>
         )}
       </section>
+
+      {/* ── Telematics Analytics (new deep-dive section) ── */}
+      <section className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-secondary">Telematics Analytics</h2>
+            <p className="text-xs text-secondary mt-0.5">Last updated: {TODAY} · Siam Motors Group</p>
+          </div>
+          <Link href="/renter/telematics"
+            className="flex items-center gap-2 bg-tertiary text-white text-sm px-4 py-2 rounded-lg hover:bg-tertiary-dark transition-colors">
+            <Radio size={14} /> Live Map
+          </Link>
+        </div>
+
+        {/* KPI strip */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <KpiCard label="Total Fleet" value={myVehicles.length} sub={`${activeContracts.length} active contracts`} icon={Car} color="#C8102E" />
+          <KpiCard label="Active Now" value={activeCount} sub={`${chargingCountLive} charging`} icon={Activity} color="#22c55e" />
+          <KpiCard label="Distance Today" value={`${todayDistance.toFixed(1)} km`} sub={`${todayTrips.length} trips`} icon={TrendingUp} color="#3b82f6" />
+          <KpiCard label="Events Today" value={todayEvents.length} sub={`${myEvents.length} total on record`} icon={AlertTriangle} color="#f59e0b" />
+        </div>
+
+        {/* Gauges */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <GaugeDonut value={safetyScore} color={safetyColor} label="Driver Safety Score"
+            sub={`Based on ${myEvents.length} recorded behavior events`} />
+          <GaugeDonut value={utilisationPct} color="#C8102E" label="Fleet Utilisation"
+            sub={`${activeCount} of ${myVehicles.length} vehicles active now`} />
+        </div>
+
+        {/* Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <TrendingUp size={15} className="text-tertiary" />
+              <p className="text-sm font-semibold text-primary">Distance per Day</p>
+              <span className="ml-auto text-xs text-secondary">Last 3 days · km</span>
+            </div>
+            <ResponsiveContainer width="100%" height={160}>
+              <BarChart data={distanceByDay} barSize={36}>
+                <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#6B6B6B" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: "#6B6B6B" }} axisLine={false} tickLine={false} width={32} />
+                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid #e5e7eb" }}
+                  formatter={(v) => [`${v} km`, "Distance"]} />
+                <Bar dataKey="km" fill="#C8102E" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <Shield size={15} className="text-tertiary" />
+              <p className="text-sm font-semibold text-primary">Events by Type</p>
+              <span className="ml-auto text-xs text-secondary">All recorded</span>
+            </div>
+            <ResponsiveContainer width="100%" height={160}>
+              <BarChart data={eventsByType} layout="vertical" barSize={18}>
+                <XAxis type="number" tick={{ fontSize: 11, fill: "#6B6B6B" }} axisLine={false} tickLine={false} />
+                <YAxis type="category" dataKey="type" tick={{ fontSize: 11, fill: "#6B6B6B" }} axisLine={false} tickLine={false} width={90} />
+                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: "1px solid #e5e7eb" }} />
+                <Bar dataKey="count" fill="#C8102E" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Live Vehicle Status table */}
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+            <Radio size={14} className="text-tertiary" />
+            <h2 className="text-sm font-semibold text-primary">Live Vehicle Status</h2>
+            <span className="ml-auto text-xs text-secondary">{myVehicles.length} vehicles · Updated just now</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-100">
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">License</th>
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Model</th>
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Battery</th>
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Speed</th>
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Status</th>
+                  <th className="text-left px-5 py-3 text-xs text-secondary font-medium">Updated</th>
+                  <th className="px-5 py-3" />
+                </tr>
+              </thead>
+              <tbody>
+                {myVehicles.map((v) => {
+                  const status = v.isCharging ? "Charging" : v.ignitionOn ? "Moving" : "Idle";
+                  const statusCls = v.isCharging
+                    ? "text-blue-600 bg-blue-50"
+                    : v.ignitionOn
+                    ? "text-green-600 bg-green-50"
+                    : "text-secondary bg-gray-100";
+                  const batCls = v.batteryPct < 20 ? "bg-red-500" : v.batteryPct < 50 ? "bg-amber-400" : "bg-green-500";
+                  return (
+                    <tr key={v.carId} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50">
+                      <td className="px-5 py-3 font-mono text-xs font-semibold text-primary">{v.licensePlate}</td>
+                      <td className="px-5 py-3 text-xs text-secondary">{v.brandName} {v.modelName}</td>
+                      <td className="px-5 py-3">
+                        <div className="flex items-center gap-2 w-28">
+                          <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                            <div className={`h-full rounded-full ${batCls}`} style={{ width: `${v.batteryPct}%` }} />
+                          </div>
+                          <span className="text-xs text-secondary w-8 text-right">{v.batteryPct}%</span>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3 text-xs text-secondary">{v.speed} km/h</td>
+                      <td className="px-5 py-3">
+                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusCls}`}>{status}</span>
+                      </td>
+                      <td className="px-5 py-3 text-xs text-secondary">{v.lastUpdated.slice(11)}</td>
+                      <td className="px-5 py-3">
+                        <Link href={`/renter/telematics/${v.carId}`}
+                          className="flex items-center gap-0.5 text-xs text-tertiary hover:underline whitespace-nowrap">
+                          Detail <ChevronRight size={12} />
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Recent Behavior Events */}
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+            <AlertTriangle size={14} className="text-tertiary" />
+            <h2 className="text-sm font-semibold text-primary">Recent Behavior Events</h2>
+            <Link href="/renter/telematics" className="ml-auto text-xs text-tertiary hover:underline">View all</Link>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {recentEvents.map((e) => {
+              const sevCls = e.severity === "High"
+                ? "text-red-600 bg-red-50 border border-red-100"
+                : e.severity === "Medium"
+                ? "text-amber-600 bg-amber-50 border border-amber-100"
+                : "text-secondary bg-gray-100 border border-gray-200";
+              const vehicle = myVehicles.find((v) => v.carId === e.carId);
+              return (
+                <div key={e.id} className="flex items-center gap-4 px-5 py-3">
+                  <div className="w-8 h-8 rounded-lg bg-tertiary-tint flex items-center justify-center shrink-0">
+                    <Gauge size={14} className="text-tertiary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-primary">{e.type}</p>
+                    <p className="text-xs text-secondary truncate">{e.location} · {vehicle?.licensePlate}</p>
+                  </div>
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${sevCls}`}>{e.severity}</span>
+                    <span className="flex items-center gap-1 text-xs text-secondary">
+                      <Clock size={11} /> {e.timestamp.slice(11)}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }
