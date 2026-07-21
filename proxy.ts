@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/auth-session";
 
 const destinations = {
-  renter: "/renter/account",
+  renter: "/renter/dashboard",
   admin: "/admin/dashboard",
 } as const;
 

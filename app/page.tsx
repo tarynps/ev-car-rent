@@ -20,7 +20,7 @@ const accounts = {
     label: "Renter",
     email: "ev-renter@gmail.com",
     description: "Manage your fleet, billing, and account",
-    destination: "/renter/account",
+    destination: "/renter/dashboard",
   },
   admin: {
     label: "Admin",
