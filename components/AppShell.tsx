@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Car, Database, CalendarCheck, CheckSquare,
   DollarSign, BarChart2, RefreshCw, Building, Settings,
-  User, Search, BookOpen, CreditCard, Bell, Menu, X, Radio,
+  User, Search, BookOpen, CreditCard, Bell, Menu, X, Radio, LogOut,
 } from "lucide-react";
 import { useState } from "react";
 import { notifications } from "@/lib/mock-data";
@@ -36,10 +36,18 @@ const renterNav = [
 
 export default function AppShell({ children, variant }: { children: React.ReactNode; variant: "admin" | "renter" }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const nav = variant === "admin" ? adminNav : renterNav;
   const unread = notifications.filter((n) => !n.read).length;
   const isRenter = variant === "renter";
+
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    setSidebarOpen(false);
+    router.replace("/");
+    router.refresh();
+  }
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
@@ -93,7 +101,7 @@ export default function AppShell({ children, variant }: { children: React.ReactN
           <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isRenter ? "bg-slate-700" : "bg-gray-100"}`}>
             <User size={14} className={isRenter ? "text-slate-300" : "text-gray-500"} />
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <p className={`text-xs font-medium ${isRenter ? "text-white" : "text-gray-900"}`}>
               {isRenter ? "Siriporn W." : "Natthapong C."}
             </p>
@@ -102,6 +110,18 @@ export default function AppShell({ children, variant }: { children: React.ReactN
             </p>
           </div>
         </div>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className={`mt-3 flex w-full items-center justify-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
+            isRenter
+              ? "border-slate-700 text-slate-300 hover:border-slate-600 hover:bg-slate-800 hover:text-white"
+              : "border-gray-200 text-gray-600 hover:border-red-200 hover:bg-tertiary-tint hover:text-tertiary"
+          }`}
+        >
+          <LogOut size={14} />
+          Log out
+        </button>
       </div>
     </div>
   );
